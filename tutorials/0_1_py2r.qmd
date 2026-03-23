@@ -1,0 +1,106 @@
+---
+title: "From Python to R and back....!"
+format: html
+author: Ronen Weinberg
+Date: March 21, 2026
+execute: 
+  error: true
+---
+
+# Overview
+
+Before I start, I wanted to test the combination of Python and R in the same `.qmd` file.
+
+Apparently, it's very simple — just add `library(reticulate)` in an R cell and you're all set.
+
+To pass objects (e.g., variables, data frames, and so on...) between the two languages, you need to reference the *variable* as `r.[variable]` in Python or `py$[variable]` in R.
+
+So where do the problems start? When you try to insert Python inline code inside markdown text.\
+In short, even though your `.qmd` document contains both R and Python executable code cells, it can execute **only** R inline code.\\ To bypass this, there are a bunch of `reticulate::` functions that can help. The two main ones are:
+
+-   `reticulate::py_str()` — roughly equivalent to `print(str(...))`
+
+-   `reticulate::py_eval()` — executes a Python expression that returns numbers, strings, lists, or dicts (can be problematic with Python objects like `type`, classes, or modules)
+
+**Example:** ``{r} reticulate::py_eval("str(type(x))")`` — returns the type of variable `x` as a string
+
+# Examples
+
+It's good practice to start by loading the `reticulate` package:
+
+```{r}
+# <R>
+
+# Load reticulate package
+library(reticulate)
+```
+
+## Passing variable from Python to R
+
+```{python}
+# <Py>
+
+# Create Python variable py_x
+py_x = 10
+print(py_x)
+```
+
+Type of py_x: *`{r} reticulate::py_eval("str(type(py_x))")`*
+
+```{r}
+# <R>
+
+# Passing Python variable py_x to R 
+r_x <- py$py_x
+print(r_x)
+```
+
+Class of r_x: *`{r} print(class(r_x))`*
+
+## Passing variable from R to Python
+
+```{r}
+# <R>
+
+# Create R variable r_y 
+r_y <- 20
+print(r_y)
+```
+
+Class of r_y: *`{r} print(class(r_y))`*
+
+```{python}
+# <Py>
+
+# Passing the R variable r_y to Python 
+py_y = r.r_y
+print(py_y)
+```
+
+Type of py_y: `{r} reticulate::py_eval("str(type(py_y))")`
+
+## Passing DataFrame from Python to R
+
+```{python}
+# <Py>
+
+# Create a pandas df from .csv file
+import pandas as pd
+
+url = "https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv"
+
+py_flights = pd.read_csv(url)
+py_flights.head()
+```
+
+Type of py_flights: *`{r} reticulate::py_eval("str(type(py_flights))")`*
+
+```{r}
+# <R>
+
+# Passing the pandas df to R data.frame
+r_flights <- py$py_flights
+head(r_flights)
+```
+
+Class of r_flights: `{r} print(class(r_flights))`
