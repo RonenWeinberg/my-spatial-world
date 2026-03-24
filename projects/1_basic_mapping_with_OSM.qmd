@@ -1,0 +1,181 @@
+---
+title: "Project - Mapping my city's roads with OSM"
+format: html
+author: Ronen Weinberg
+date: March 23, 2026
+execute: 
+  error: true
+---
+
+# Overview
+
+In this basic project, I'll map the roads of my city based on [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Main_Page) dataset.
+
+This project will be based on OSMnx package.\
+[OSMnx](https://osmnx.readthedocs.io/en/stable/index.html) is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap
+
+
+# Getting the data
+
+We'll of course start with import the necessary packages:
+```{python}
+import osmnx as ox
+import geopandas as gpd
+```
+
+## Define the place / boundaries
+First, we'll get the city boundaries, using `ox.geocode_to_gdf()` function. This have 2 main roles:
+
+ - Make sure that the OSM recognize the place's name.
+
+ - Create a polygon of the place's border which we can use later
+
+```{python}
+city_name = "Hod Hasharon, Israel"
+
+boundary = ox.geocode_to_gdf(city_name)
+boundary.head()
+```
+
+**`boundary` object type:** *`{python} type(boundary)`*
+
+```{python}
+# Confirm CRS:
+boundary.crs
+```
+
+
+
+```{python}
+# Basic plot
+boundary.plot()
+```
+
+## Load the roads dataset
+
+::: {.callout-note}
+In this section we'll load the whole data sets and clean the data after loading, using `geopandas`
+:::
+
+Now we can load the roads and paths. First we need to define the *tags*.\
+`tags` is the key:value of the map feature we want to load. full list of the tags can be found [here](https://wiki.openstreetmap.org/wiki/Map_features).\
+We'll use `'highway': True` to retrieve the whole roads, paths and cycle tracks and other recognised routes.
+
+### features_from_place()
+
+This method use the place's name we confirmed earlier:
+
+```{python}
+# Defining 'tags' (the value can be a list of specific features)
+tags = {'highway': True}
+
+# Using features_from_place()
+city_roads = ox.features_from_place(city_name, tags=tags)
+```
+We got `{python} city_roads.shape[0]` features with `{python} city_roads.shape[1]` attributes
+
+### features_from_polygon()
+
+In this method we use the polygon object we created:
+
+```{python}
+# Using features_from_polygon()
+city_roads_from_polyon = ox.features_from_polygon(boundary.geometry.iloc[0],
+                                           tags=tags)
+```
+
+:::{.callout-note}
+The polygon argument is `boundary.geometry.iloc[0]` which is *`{python} type(boundary.geometry.iloc[0])`* type object
+:::
+
+Here we also got `{python} city_roads_from_polyon.shape[0]` features with `{python} city_roads_from_polyon.shape[1]` attributes
+
+# Cleaning the data
+
+Let's check what we've got:
+
+```{python}
+city_roads.head()
+```
+
+The 2 main things we can see from the start:
+
+1. Not all the features are LineStrings, some of them are points (like bus stops traffic signals and so on)
+
+2. There's a lot (!!!) of attributes (85 in fact) which most of them are NaN
+
+## Cleaning geometry types
+
+Lets check the geometry type we got, and clean all non-LineString features
+```{python}
+city_roads.geometry.geom_type.value_counts()
+```
+
+```{python}
+city_roads_linestrings = city_roads[city_roads.geometry.type == "LineString"]
+```
+Now we left with `{python} city_roads_linestrings.shape[0]` features
+
+## Cleaning columns 
+
+For now we'll leave only 3 columns:
+
+- **'geometry'** - IMPORTANT!
+
+- **'highway'** - The road type according to the key:value definitions
+
+- **'name'** - Streets name (if available)
+
+```{python}
+city_roads_linestrings = city_roads_linestrings[['geometry', 'highway', 'name']]
+```
+
+Now we've got a gdf with `{python} city_roads_linestrings.shape[0]` features and `{python} city_roads_linestrings.shape[1]` attributes
+
+# A little bit of analysis
+
+Let's do now, a little bit of un-important analysis... Let's find out which type of `'highway` has the longest segments in total.
+
+## Re-project the CRS
+
+Before we add the length of the segments, we have to check the gdf's CRS to see if it have a relevant measures:
+
+```{python}
+# Check gdf CRS 
+city_roads_linestrings.crs
+```
+The CRS, in this case is WGS84 (EPSG: 4326) which means that all measurements will be in degrees, as we can see from the firsts few rows:
+
+```{python}
+print(city_roads_linestrings.geometry.length.head())
+```
+So the first thing we need to do is to re-project our gdf to a metric CRS, in this case: WGS84/UTM 36N (EPSG: 32636)
+
+::: {.callout-tip}
+For a full list of all the available CRSs (and there are thousands of those), check [epsg.io site](https://epsg.io/)
+:::
+
+```{python}
+city_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)
+```
+And now, if we'll check the CRS we'll get:
+
+```{python}
+city_roads_UTM.crs
+```
+And if we'll check the length of the firsts few features, we'll get:
+```{python}
+print(city_roads_UTM.geometry.length.head())
+```
+
+## Adding 'length' attribute
+
+```{python}
+city_roads_UTM['length'] = city_roads_UTM.geometry.length
+city_roads_UTM.head()
+```
+## Calculating the total length of each 'highway' value
+
+```{python}
+city_roads_UTM.groupby('highway').sum('length').sort_values(by='length', ascending=False)
+```
