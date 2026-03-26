@@ -1,32 +1,48 @@
 ---
-title: "Project - Mapping my city's roads with OSM"
+title: "Project - Mapping city's roads with OSM"
 format: html
 author: Ronen Weinberg
 date: March 23, 2026
 execute: 
   error: true
+  warning: false
 ---
 
 # Overview
 
-In this basic project, I'll map the roads of my city based on [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Main_Page) dataset.
+The goal of this project is to extract, clean and visualize the road network of Hod Hasharon using [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Main_Page) data, while demonstrating a basic spatial workflow and basic Python tools like OSMnx, geopandas and matplotlib.
 
-This project will be based on OSMnx package.\
-[OSMnx](https://osmnx.readthedocs.io/en/stable/index.html) is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap
+[Hod Hasharon](https://en.wikipedia.org/wiki/Hod_HaSharon) is a typical suburban city, with population of +65K. Most of the population works outside the city, which creates  heavy traffic on the outer axis routes, especially during morning hours.
+
+## Spatial tools used in this project
+[GeoPandas](https://geopandas.org/en/stable/) for a spatial analysis.
+
+[OSMnx](https://osmnx.readthedocs.io/en/stable/index.html) is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.
+
+## What you'll learn
+
+How to use basic workflow to:
+
+- Download spatial data from OpenStreetMap using OSMnx
+- Basic GeoDataFrame inspection and cleaning
+- CRS transformation and why it matters
+- Simple spatial analysis (length by road type)
+- Basic static and interactive visualization 
 
 
 # Getting the data
 
-We'll of course start with import the necessary packages:
+We'll start by importing the necessary packages:
 ```{python}
 import osmnx as ox
+import pandas as pd
 import geopandas as gpd
 ```
 
 ## Define the place / boundaries
-First, we'll get the city boundaries, using `ox.geocode_to_gdf()` function. This have 2 main roles:
+First, we'll get the city boundaries using the `ox.geocode_to_gdf()` function. This has 2 main roles:
 
- - Make sure that the OSM recognize the place's name.
+ - Make sure that OSM recognizes the place's name.
 
  - Create a polygon of the place's border which we can use later
 
@@ -54,16 +70,18 @@ boundary.plot()
 ## Load the roads dataset
 
 ::: {.callout-note}
-In this section we'll load the whole data sets and clean the data after loading, using `geopandas`
+In this section we'll load the full dataset and clean the data after loading, using `geopandas`
 :::
 
 Now we can load the roads and paths. First we need to define the *tags*.\
 `tags` is the key:value of the map feature we want to load. full list of the tags can be found [here](https://wiki.openstreetmap.org/wiki/Map_features).\
-We'll use `'highway': True` to retrieve the whole roads, paths and cycle tracks and other recognised routes.
+We'll use `'road_type': True` to retrieve the whole roads, paths and cycle tracks and other recognised routes.
+
+`OSMnx` has a few `features_from_*()` methods to load data, in which we'll focus on 2 of them.
 
 ### features_from_place()
 
-This method use the place's name we confirmed earlier:
+This method uses the place name we confirmed earlier, it's simpler method but depends on OSM's place definitions:
 
 ```{python}
 # Defining 'tags' (the value can be a list of specific features)
@@ -76,11 +94,11 @@ We got `{python} city_roads.shape[0]` features with `{python} city_roads.shape[1
 
 ### features_from_polygon()
 
-In this method we use the polygon object we created:
+In this method we use the polygon object we created, which gives more control and especially useful with custom boundaries:
 
 ```{python}
 # Using features_from_polygon()
-city_roads_from_polyon = ox.features_from_polygon(boundary.geometry.iloc[0],
+city_roads_from_polygon = ox.features_from_polygon(boundary.geometry.iloc[0],
                                            tags=tags)
 ```
 
@@ -88,11 +106,10 @@ city_roads_from_polyon = ox.features_from_polygon(boundary.geometry.iloc[0],
 The polygon argument is `boundary.geometry.iloc[0]` which is *`{python} type(boundary.geometry.iloc[0])`* type object
 :::
 
-Here we also got `{python} city_roads_from_polyon.shape[0]` features with `{python} city_roads_from_polyon.shape[1]` attributes
+Here we also got `{python} city_roads_from_polygon.shape[0]` features with `{python} city_roads_from_polygon.shape[1]` attributes
 
-# Cleaning the data
+# Cleaning and filtering
 
-Let's check what we've got:
 
 ```{python}
 city_roads.head()
@@ -102,68 +119,73 @@ The 2 main things we can see from the start:
 
 1. Not all the features are LineStrings, some of them are points (like bus stops traffic signals and so on)
 
-2. There's a lot (!!!) of attributes (85 in fact) which most of them are NaN
+2. There are 85 attributes which most are NaN
 
-## Cleaning geometry types
+## Filtering geometry types
 
-Lets check the geometry type we got, and clean all non-LineString features
+Let's check the geometry type we got, and filter out all non-LineString features
 ```{python}
 city_roads.geometry.geom_type.value_counts()
 ```
 
 ```{python}
-city_roads_linestrings = city_roads[city_roads.geometry.type == "LineString"]
+city_roads_linestrings = city_roads[
+    city_roads.geometry.geom_type.isin(["LineString", "MultiLineString"])]
 ```
-Now we left with `{python} city_roads_linestrings.shape[0]` features
+
+::: {.callout-tip}
+Although there aren't any MultiLineString geometric types features in this gdf, it's a good practice to include them.
+:::
+After filtering, the gdf contains `{python} city_roads_linestrings.shape[0]` features
 
 ## Cleaning columns 
 
-For now we'll leave only 3 columns:
+The necessary columns are:
 
 - **'geometry'** - IMPORTANT!
 
-- **'highway'** - The road type according to the key:value definitions
+- **'highway'** - The road type according to the OSM's key:value definition (will be changed to `road_type`)
 
 - **'name'** - Streets name (if available)
 
 ```{python}
 city_roads_linestrings = city_roads_linestrings[['geometry', 'highway', 'name']]
+city_roads_linestrings.rename({"highway": "road_type"}, axis="columns", inplace=True) # Rename column
 ```
 
-Now we've got a gdf with `{python} city_roads_linestrings.shape[0]` features and `{python} city_roads_linestrings.shape[1]` attributes
+The clean gdf contains `{python} city_roads_linestrings.shape[0]` features and `{python} city_roads_linestrings.shape[1]` attributes
 
 # A little bit of analysis
 
-Let's do now, a little bit of un-important analysis... Let's find out which type of `'highway` has the longest segments in total.
+Now it's time for a simple analysis. Let's find out the `'road_type'`, their total length and their percentage from the total roads' length.
 
-## Re-project the CRS
+## Reproject the CRS
 
-Before we add the length of the segments, we have to check the gdf's CRS to see if it have a relevant measures:
+Before we add the length of the segments, we have to check the gdf's CRS to see if it has meaningful units of measurement:
 
 ```{python}
 # Check gdf CRS 
 city_roads_linestrings.crs
 ```
-The CRS, in this case is WGS84 (EPSG: 4326) which means that all measurements will be in degrees, as we can see from the firsts few rows:
 
 ```{python}
 print(city_roads_linestrings.geometry.length.head())
 ```
-So the first thing we need to do is to re-project our gdf to a metric CRS, in this case: WGS84/UTM 36N (EPSG: 32636)
+In WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.
 
 ::: {.callout-tip}
-For a full list of all the available CRSs (and there are thousands of those), check [epsg.io site](https://epsg.io/)
+For a full list of all the available CRSs, check [epsg.io site](https://epsg.io/)
 :::
 
 ```{python}
 city_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)
 ```
-And now, if we'll check the CRS we'll get:
+So now, if we check the CRS we'll get:
 
 ```{python}
 city_roads_UTM.crs
 ```
-And if we'll check the length of the firsts few features, we'll get:
+And if we check the length of the first few features, we'll get:
 ```{python}
 print(city_roads_UTM.geometry.length.head())
 ```
@@ -171,11 +193,79 @@ print(city_roads_UTM.geometry.length.head())
 ## Adding 'length' attribute
 
 ```{python}
-city_roads_UTM['length'] = city_roads_UTM.geometry.length
+city_roads_UTM['length'] = round(city_roads_UTM.geometry.length, 2)
 city_roads_UTM.head()
 ```
-## Calculating the total length of each 'highway' value
+## Calculating the total length of each 'road_type' value
 
 ```{python}
-city_roads_UTM.groupby('highway').sum('length').sort_values(by='length', ascending=False)
+roads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length'].sum())
+roads_types['perc. of total length'] = round((roads_types['length'] / sum(roads_types['length']) * 100), 2)
+roads_types.sort_values(by='length', ascending=False)
 ```
+## Conclusion
+As can expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} round(roads_types.loc['residential', 'perc. of total length'])`%), in contrast to the small amount of primary and secondary types of roads
+(~`{python} round(roads_types.loc['primary', 'perc. of total length']) + round(roads_types.loc['secondary', 'perc. of total length'])`%) which play a key role in outer connectivity. A key factor in the cause for traffic jams in the mornings...
+
+
+# Plotting
+
+Before we plot the streets, we'll define an ordered categorical type of the highway values according to [SOM](https://wiki.openstreetmap.org/wiki/Map_features#Highway) and apply it to the `'road_type'` column in the gdf
+
+```{python}
+# Create ordered list of highway values in the gdf
+from pandas.api.types import CategoricalDtype
+
+highway_types_ordered = CategoricalDtype(categories=["primary", "secondary", "tertiary", "residential", "motorway_link", "primary_link", "secondary_link", "living_street", "service", "pedestrian", "track", "footway", "steps", "path", "cycleway"])
+
+# Attaching the order to the gdf
+city_roads_UTM['road_type'] = city_roads_UTM['road_type'].astype(highway_types_ordered)
+```
+Now we can create a simple plot of Hod Hasharon's streets with the categorical symbology:
+
+```{python}
+#| fig-cap: "The map shows the dominance of residential streets (orange shades)"
+
+import matplotlib.pyplot as plt
+fig, ax = plt.subplots(figsize=(10, 8))
+city_roads_UTM.plot(ax=ax,
+                    column='road_type', 
+                    cmap="plasma_r", 
+                    legend=True,
+                    categorical=True,
+                    legend_kwds={"loc": "lower right",
+                                 "ncol": 2,
+                                 "title": "OSM Road Types",
+                                 "fontsize": 9})
+ax.set_axis_off()
+plt.title("Hod Hasharon - Street Types (OpenStreetMap)", size=20)
+
+plt.show()
+```
+
+
+```{python}
+#| fig-cap: "Interactive map"
+city_roads_UTM.explore(column='road_type',
+                       cmap="plasma_r")
+```
+# Summary
+
+In this project we used a basic workflow to:
+
+- Extract roads data from OpenStreetMap
+- Clean and filter geometries
+- Reproject data for accurate measurements
+- Calculate road lengths by type
+- Visualize the results
+
+This workflow can serve as a foundation for more advanced spatial analysis projects.
+
+## Advanced actions
+
+Here's some advanced actions which can be made on this project:
+
+- Divide the road types into 3 bins - connectivity roads, local roads, walking paths and bicycle routes
+- Make a comparison with other cities results
+- Improved visualization
+
