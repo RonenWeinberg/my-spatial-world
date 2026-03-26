@@ -1,5 +1,5 @@
 ---
-title: "Project - Mapping city's roads with OSM"
+title: "Mapping a City's Road Network with OpenStreetMap"
 format: html
 author: Ronen Weinberg
 date: March 23, 2026
@@ -10,9 +10,9 @@ execute:
 
 # Overview
 
-The goal of this project is to extract, clean and visualize the road network of Hod Hasharon using [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Main_Page) data, while demonstrating a basic spatial workflow and basic Python tools like OSMnx, geopandas and matplotlib.
+The goal of this project is to extract, clean, and visualize the road network of Hod Hasharon using [OpenStreetMap](https://wiki.openstreetmap.org/wiki/Main_Page) data, while demonstrating a basic spatial workflow and basic Python tools like OSMnx, geopandas and matplotlib.
 
-[Hod Hasharon](https://en.wikipedia.org/wiki/Hod_HaSharon) is a typical suburban city, with population of +65K. Most of the population works outside the city, which creates  heavy traffic on the outer axis routes, especially during morning hours.
+[Hod Hasharon](https://en.wikipedia.org/wiki/Hod_HaSharon) is a typical suburban city, with population of over 65,000. Most of the population works outside the city, which creates heavy traffic on the outer axis routes, especially during morning hours.
 
 ## Spatial tools used in this project
 [GeoPandas](https://geopandas.org/en/stable/) for a spatial analysis.
@@ -203,9 +203,19 @@ roads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length'].sum())
 roads_types['perc. of total length'] = round((roads_types['length'] / sum(roads_types['length']) * 100), 2)
 roads_types.sort_values(by='length', ascending=False)
 ```
+
+```{python}
+#| echo: false
+
+# Road types calculation for the text below
+residential =  round(roads_types.loc['residential', 'perc. of total length'])
+connectivity = round(roads_types.loc['primary', 'perc. of total length']) + round(roads_types.loc['secondary', 'perc. of total length'])
+pathways = round(roads_types.loc['path', 'perc. of total length']) + round(roads_types.loc['footway', 'perc. of total length']) + round(roads_types.loc['cycleway', 'perc. of total length'])
+```
+
 ## Conclusion
-As can expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} round(roads_types.loc['residential', 'perc. of total length'])`%), in contrast to the small amount of primary and secondary types of roads
-(~`{python} round(roads_types.loc['primary', 'perc. of total length']) + round(roads_types.loc['secondary', 'perc. of total length'])`%) which play a key role in outer connectivity. A key factor in the cause for traffic jams in the mornings...
+As expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} residential`%), in contrast to the small amount of primary and secondary types of roads (~`{python} connectivity`%) which play a key role in outer connectivity. This may be a contributing factor to morning traffic congestion.\
+The relatively high share of paths, footways and cycleways (~`{python} pathways`%) also suggests a mixed-use urban environment with accessible pedestrian and cycling routes. 
 
 
 # Plotting
@@ -224,7 +234,7 @@ city_roads_UTM['road_type'] = city_roads_UTM['road_type'].astype(highway_types_o
 Now we can create a simple plot of Hod Hasharon's streets with the categorical symbology:
 
 ```{python}
-#| fig-cap: "The map shows the dominance of residential streets (orange shades)"
+#| fig-cap: "Dominance of residential streets (orange shades) and pedestrian pathways (purple-blue shades)"
 
 import matplotlib.pyplot as plt
 fig, ax = plt.subplots(figsize=(10, 8))
@@ -247,7 +257,9 @@ plt.show()
 ```{python}
 #| fig-cap: "Interactive map"
 city_roads_UTM.explore(column='road_type',
-                       cmap="plasma_r")
+                       cmap="plasma_r",
+                       tiles='CartoDB positron'
+                       )
 ```
 # Summary
 
@@ -261,11 +273,11 @@ In this project we used a basic workflow to:
 
 This workflow can serve as a foundation for more advanced spatial analysis projects.
 
-## Advanced actions
+## Advanced action-items
 
-Here's some advanced actions which can be made on this project:
+Here's some advanced action-items which can be made on this project:
 
-- Divide the road types into 3 bins - connectivity roads, local roads, walking paths and bicycle routes
-- Make a comparison with other cities results
-- Improved visualization
+- Divide the road types into 3 bins - connectivity roads, local roads, walking pathways and bicycle routes
+- Compare with other cities 
+- Improve visualization
 
