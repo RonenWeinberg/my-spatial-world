@@ -1,11 +1,18 @@
 ---
 title: "Mapping a City's Road Network with OpenStreetMap"
-format: html
+format: 
+  html:
+    toc: true
+    code-overflow: wrap
+    lightbox: true
+
 author: Ronen Weinberg
-date: March 23, 2026
+date: last-modified
+date-format: DD/MM/YYYY
 execute: 
   error: true
   warning: false
+categories: [Analysis, Python, OSM, Basic]
 ---
 
 # Overview
@@ -19,9 +26,9 @@ The goal of this project is to extract, clean, and visualize the road network of
 
 [OSMnx](https://osmnx.readthedocs.io/en/stable/index.html) is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.
 
-## What you'll learn
+## Work stages
 
-How to use basic workflow to:
+This basic workflow include:
 
 - Download spatial data from OpenStreetMap using OSMnx
 - Basic GeoDataFrame inspection and cleaning
@@ -110,7 +117,6 @@ Here we also got `{python} city_roads_from_polygon.shape[0]` features with `{pyt
 
 # Cleaning and filtering
 
-
 ```{python}
 city_roads.head()
 ```
@@ -155,7 +161,7 @@ city_roads_linestrings.rename({"highway": "road_type"}, axis="columns", inplace=
 
 The clean gdf contains `{python} city_roads_linestrings.shape[0]` features and `{python} city_roads_linestrings.shape[1]` attributes
 
-# A little bit of analysis
+# Analysis
 
 Now it's time for a simple analysis. Let's find out the `'road_type'`, their total length and their percentage from the total roads' length.
 
@@ -213,14 +219,9 @@ connectivity = round(roads_types.loc['primary', 'perc. of total length']) + roun
 pathways = round(roads_types.loc['path', 'perc. of total length']) + round(roads_types.loc['footway', 'perc. of total length']) + round(roads_types.loc['cycleway', 'perc. of total length'])
 ```
 
-## Conclusion
-As expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} residential`%), in contrast to the small amount of primary and secondary types of roads (~`{python} connectivity`%) which play a key role in outer connectivity. This may be a contributing factor to morning traffic congestion.\
-The relatively high share of paths, footways and cycleways (~`{python} pathways`%) also suggests a mixed-use urban environment with accessible pedestrian and cycling routes. 
-
-
 # Plotting
 
-Before we plot the streets, we'll define an ordered categorical type of the highway values according to [SOM](https://wiki.openstreetmap.org/wiki/Map_features#Highway) and apply it to the `'road_type'` column in the gdf
+Before we plot the streets, we'll define an ordered categorical type of the highway values according to [OSM](https://wiki.openstreetmap.org/wiki/Map_features#Highway) and apply it to the `'road_type'` column in the gdf
 
 ```{python}
 # Create ordered list of highway values in the gdf
@@ -253,7 +254,6 @@ plt.title("Hod Hasharon - Street Types (OpenStreetMap)", size=20)
 plt.show()
 ```
 
-
 ```{python}
 #| fig-cap: "Interactive map"
 city_roads_UTM.explore(column='road_type',
@@ -261,6 +261,11 @@ city_roads_UTM.explore(column='road_type',
                        tiles='CartoDB positron'
                        )
 ```
+
+# Conclusion
+As expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} residential`%), in contrast to the small amount of primary and secondary types of roads (~`{python} connectivity`%) which play a key role in outer connectivity. This may be a contributing factor to morning traffic congestion.\
+The relatively high share of paths, footways and cycleways (~`{python} pathways`%) also suggests a mixed-use urban environment with accessible pedestrian and cycling routes. 
+
 # Summary
 
 In this project we used a basic workflow to:
