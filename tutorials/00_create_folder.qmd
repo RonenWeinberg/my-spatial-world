@@ -8,11 +8,11 @@ from: markdown+emoji
 
 # Overview
 
-My main goal with this project is to create a blog / web site about spatial analysis, with 2 main focuses - analysis project where I take an issue and try to analyse it and tutorial topics where I focus on one issue and try to explain it (especially for me...).
+My main goal with this project is to create a blog / web site about spatial analysis, with 2 main focuses - analysis project where I take an issue and try to analyse it, and tutorial topics where I focus on one issue and try to explain it (especially for me...).
 
 For those I want to use Python, R and SQL with duckdb.
 
-The tools I'm using is Positron with Quarto.
+The tools I'm using are Positron with Quarto.
 
 O.K, So at first I thought I can do the whole thing in one go, create a web / blog Quarto project and fill it with content - A mistake! I'm not familiar enough with Quarto projects to be able to do that :facepalm:
 
@@ -22,29 +22,18 @@ Hopefully, as I go on with this project I'm going to update it.
 
 # Preparing the folder
 
-1.  So the first thing to do is create a repository with **both** Python and R environments. To do so I first created in Positron a *R Project Folder* with a renv (for a reproducible environment) and with Git-ready.
+1.  So the first thing to do is create a repository with **both** Python and R environments. To do so I first created in Positron a *R Project Folder* with renv (for a reproducible environment) and with Git-ready.
 
 2.  Next, I added a Python UV environment `{pwsh} uv init`. Now we have a repository with the 2 environments ready
 
 3.  Now it's time to add some basics packages:\
-    Python: (`{pwsh} uv add ...`)\
+    Python: `{pwsh} uv add geopandas rasterio duckdb folium leafmap jupyter`
 
-    -   geopandas
-    -   rasterio
-    -   duckdb
-    -   folium
-    -   leafmap
-    -   jupyter
+    R: `{R console}install.packages(c("pacman","sf", "terra", "tidyverse", "reticulate"))`
 
-    R: (`{R console}install.packages(c(...))`)\
+    *Note: I am using `reticulate` to facilitate the integration between my R and Python environments.*
 
-    -   pacman
-    -   sf
-    -   terra
-    -   tidyverse
-    -   reticulate *- Integrate between R and Python*
-
-    Ofcourse, I'll add more packages when needed
+    Of course, I'll add more packages when needed
 
 4.  To make sure `reticulate` package in R can find the UV virtual environment in the root directory (Windows):
 
@@ -57,4 +46,4 @@ Hopefully, as I go on with this project I'm going to update it.
 
 5.  The last thing for now, I just added 2 new folders to the repository - *projects* and *tutorials* which will contain the .qmd docs.
 
-**And now our repository is ready! (For the meantime)**
+**And now our repository is ready! (For the mean)**
