@@ -46,7 +46,15 @@ Hopefully, as I go on with this project I'm going to update it.
 
     Ofcourse, I'll add more packages when needed
 
-4.  The last thing for now, I just added 2 new folders to the repository - *projects* and *tutorials* which will contain the .qmd docs.
+4.  To make sure `reticulate` package in R can find the UV virtual environment in the root directory (Windows):
 
-**And now our repository is ready!**
+    -   **Create `.Renviron`:** in your root directory, create a new file named `.Renviron`.
 
+    -   **Set Python Path:** in that file add the full path to your Python executable: 
+        - `RETICULATE_PYTHON = "C:/path/to/your/project/.venv/Scripts/python.exe"`
+
+    -   **Git Security:** Add the `.Renviron` to the `.gitignore` file, so your local absolute paths aren't uploaded to GitHub.
+
+5.  The last thing for now, I just added 2 new folders to the repository - *projects* and *tutorials* which will contain the .qmd docs.
+
+**And now our repository is ready! (For the meantime)**
