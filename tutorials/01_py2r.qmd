@@ -1,10 +1,5 @@
 ---
 title: "From Python to R and back....!"
-format: html
-author: Ronen Weinberg
-Date: March 21, 2026
-execute: 
-  error: true
 ---
 
 # Overview

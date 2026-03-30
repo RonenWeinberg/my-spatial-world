@@ -1,17 +1,5 @@
 ---
 title: "Mapping a City's Road Network with OpenStreetMap"
-format: 
-  html:
-    toc: true
-    code-overflow: wrap
-    lightbox: true
-
-author: Ronen Weinberg
-date: last-modified
-date-format: DD/MM/YYYY
-execute: 
-  error: true
-  warning: false
 categories: [Analysis, Python, OSM, Basic]
 ---
 

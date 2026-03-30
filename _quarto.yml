@@ -1,11 +1,14 @@
 project:
   type: website
+  output-dir: docs
   
 date: last-modified
 date-format: DD/MM/YYYY
 
 website:
   title: "My Spatial World"
+  description: "Spatial Analysis and Tutorials"
+
   sidebar:
     style: "docked"
     search: true
@@ -29,12 +32,16 @@ format:
     css: styles.css
     toc: true
     code-overflow: wrap
+    code-fold: show
+    lightbox: true
 
 execute: 
   freeze: auto
   echo: true
-  working-dir: project
-  python: ../.venv/Scripts/python.exe
+  error: true
+  warning: false
+  
+
 
 
 

@@ -1,8 +1,5 @@
 ---
 title: "Project Setup Guide"
-format: html
-author: Ronen Weinberg
-date: March 20, 2026
 from: markdown+emoji
 ---
 
