@@ -6,3 +6,5 @@
 .venv/
 /cache
 .Renviron
+/.quarto/
+**/*.quarto_ipynb
