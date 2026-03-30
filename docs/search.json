@@ -1,0 +1,239 @@
+[
+  {
+    "objectID": "tutorials/01_py2r.html",
+    "href": "tutorials/01_py2r.html",
+    "title": "From Python to R and back….!",
+    "section": "",
+    "text": "Before I start, I wanted to test the combination of Python and R in the same .qmd file.\nApparently, it’s very simple — just add library(reticulate) in an R cell and you’re all set.\nTo pass objects (e.g., variables, data frames, and so on…) between the two languages, you need to reference the variable as r.[variable] in Python or py$[variable] in R.\nSo where do the problems start? When you try to insert Python inline code inside markdown text.\nIn short, even though your .qmd document contains both R and Python executable code cells, it can execute only R inline code.\\ To bypass this, there are a bunch of reticulate:: functions that can help. The two main ones are:\n\nreticulate::py_str() — roughly equivalent to print(str(...))\nreticulate::py_eval() — executes a Python expression that returns numbers, strings, lists, or dicts (can be problematic with Python objects like type, classes, or modules)\n\nExample: {r} reticulate::py_eval(\"str(type(x))\") — returns the type of variable x as a string",
+    "crumbs": [
+      "Tutorials",
+      "From Python to R and back....!"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
+    "href": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
+    "title": "From Python to R and back….!",
+    "section": "Passing variable from Python to R",
+    "text": "Passing variable from Python to R\n\n\nCode\n# &lt;Py&gt;\n\n# Create Python variable py_x\npy_x = 10\nprint(py_x)\n\n\n10\n\n\nType of py_x: &lt;class ‘int’&gt;\n\n\nCode\n# &lt;R&gt;\n\n# Passing Python variable py_x to R \nr_x &lt;- py$py_x\nprint(r_x)\n\n\n[1] 10\n\n\nClass of r_x: integer",
+    "crumbs": [
+      "Tutorials",
+      "From Python to R and back....!"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
+    "href": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
+    "title": "From Python to R and back….!",
+    "section": "Passing variable from R to Python",
+    "text": "Passing variable from R to Python\n\n\nCode\n# &lt;R&gt;\n\n# Create R variable r_y \nr_y &lt;- 20\nprint(r_y)\n\n\n[1] 20\n\n\nClass of r_y: numeric\n\n\nCode\n# &lt;Py&gt;\n\n# Passing the R variable r_y to Python \npy_y = r.r_y\nprint(py_y)\n\n\n20.0\n\n\nType of py_y: &lt;class ‘float’&gt;",
+    "crumbs": [
+      "Tutorials",
+      "From Python to R and back....!"
+    ]
+  },
+  {
+    "objectID": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
+    "href": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
+    "title": "From Python to R and back….!",
+    "section": "Passing DataFrame from Python to R",
+    "text": "Passing DataFrame from Python to R\n\n\nCode\n# &lt;Py&gt;\n\n# Create a pandas df from .csv file\nimport pandas as pd\n\nurl = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv\"\n\npy_flights = pd.read_csv(url)\npy_flights.head()\n\n\n   year     month  passengers\n0  1949   January         112\n1  1949  February         118\n2  1949     March         132\n3  1949     April         129\n4  1949       May         121\n\n\nType of py_flights: &lt;class ‘pandas.core.frame.DataFrame’&gt;\n\n\nCode\n# &lt;R&gt;\n\n# Passing the pandas df to R data.frame\nr_flights &lt;- py$py_flights\nhead(r_flights)\n\n\n  year    month passengers\n1 1949  January        112\n2 1949 February        118\n3 1949    March        132\n4 1949    April        129\n5 1949      May        121\n6 1949     June        135\n\n\nClass of r_flights: data.frame",
+    "crumbs": [
+      "Tutorials",
+      "From Python to R and back....!"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html",
+    "href": "projects/01_basic_mapping_with_OSM.html",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "",
+    "text": "The goal of this project is to extract, clean, and visualize the road network of Hod Hasharon using OpenStreetMap data, while demonstrating a basic spatial workflow and basic Python tools like OSMnx, geopandas and matplotlib.\nHod Hasharon is a typical suburban city, with population of over 65,000. Most of the population works outside the city, which creates heavy traffic on the outer axis routes, especially during morning hours.\n\n\nGeoPandas for a spatial analysis.\nOSMnx is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.\n\n\n\nThis basic workflow include:\n\nDownload spatial data from OpenStreetMap using OSMnx\nBasic GeoDataFrame inspection and cleaning\nCRS transformation and why it matters\nSimple spatial analysis (length by road type)\nBasic static and interactive visualization",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#spatial-tools-used-in-this-project",
+    "href": "projects/01_basic_mapping_with_OSM.html#spatial-tools-used-in-this-project",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "",
+    "text": "GeoPandas for a spatial analysis.\nOSMnx is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#work-stages",
+    "href": "projects/01_basic_mapping_with_OSM.html#work-stages",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "",
+    "text": "This basic workflow include:\n\nDownload spatial data from OpenStreetMap using OSMnx\nBasic GeoDataFrame inspection and cleaning\nCRS transformation and why it matters\nSimple spatial analysis (length by road type)\nBasic static and interactive visualization",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#define-the-place-boundaries",
+    "href": "projects/01_basic_mapping_with_OSM.html#define-the-place-boundaries",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Define the place / boundaries",
+    "text": "Define the place / boundaries\nFirst, we’ll get the city boundaries using the ox.geocode_to_gdf() function. This has 2 main roles:\n\nMake sure that OSM recognizes the place’s name.\nCreate a polygon of the place’s border which we can use later\n\n\n\nCode\ncity_name = \"Hod Hasharon, Israel\"\n\nboundary = ox.geocode_to_gdf(city_name)\nboundary.head()\n\n\n\n\n\n\n\n\n\ngeometry\nbbox_west\nbbox_south\nbbox_east\nbbox_north\nplace_id\nosm_type\nosm_id\nlat\nlon\nclass\ntype\nplace_rank\nimportance\naddresstype\nname\ndisplay_name\n\n\n\n\n0\nPOLYGON ((34.87115 32.13514, 34.87122 32.13287...\n34.871145\n32.128648\n34.925727\n32.171671\n194746259\nway\n90998117\n32.14995\n34.885125\nplace\ntown\n18\n0.535236\ntown\nHod HaSharon\nHod HaSharon, Petah Tikva Subdistrict, Center ...\n\n\n\n\n\n\n\nboundary object type: geopandas.geodataframe.GeoDataFrame\n\n\nCode\n# Confirm CRS:\nboundary.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\n# Basic plot\nboundary.plot()",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#load-the-roads-dataset",
+    "href": "projects/01_basic_mapping_with_OSM.html#load-the-roads-dataset",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Load the roads dataset",
+    "text": "Load the roads dataset\n\n\n\n\n\n\nNote\n\n\n\nIn this section we’ll load the full dataset and clean the data after loading, using geopandas\n\n\nNow we can load the roads and paths. First we need to define the tags.\ntags is the key:value of the map feature we want to load. full list of the tags can be found here.\nWe’ll use 'road_type': True to retrieve the whole roads, paths and cycle tracks and other recognised routes.\nOSMnx has a few features_from_*() methods to load data, in which we’ll focus on 2 of them.\n\nfeatures_from_place()\nThis method uses the place name we confirmed earlier, it’s simpler method but depends on OSM’s place definitions:\n\n\nCode\n# Defining 'tags' (the value can be a list of specific features)\ntags = {'highway': True}\n\n# Using features_from_place()\ncity_roads = ox.features_from_place(city_name, tags=tags)\n\n\nWe got 2008 features with 85 attributes\n\n\nfeatures_from_polygon()\nIn this method we use the polygon object we created, which gives more control and especially useful with custom boundaries:\n\n\nCode\n# Using features_from_polygon()\ncity_roads_from_polygon = ox.features_from_polygon(boundary.geometry.iloc[0],\n                                           tags=tags)\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe polygon argument is boundary.geometry.iloc[0] which is shapely.geometry.polygon.Polygon type object\n\n\nHere we also got 2008 features with 85 attributes",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#filtering-geometry-types",
+    "href": "projects/01_basic_mapping_with_OSM.html#filtering-geometry-types",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Filtering geometry types",
+    "text": "Filtering geometry types\nLet’s check the geometry type we got, and filter out all non-LineString features\n\n\nCode\ncity_roads.geometry.geom_type.value_counts()\n\n\nLineString    1776\nPoint          227\nPolygon          5\nName: count, dtype: int64\n\n\n\n\nCode\ncity_roads_linestrings = city_roads[\n    city_roads.geometry.geom_type.isin([\"LineString\", \"MultiLineString\"])]\n\n\n\n\n\n\n\n\nTip\n\n\n\nAlthough there aren’t any MultiLineString geometric types features in this gdf, it’s a good practice to include them.\n\n\nAfter filtering, the gdf contains 1776 features",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#cleaning-columns",
+    "href": "projects/01_basic_mapping_with_OSM.html#cleaning-columns",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Cleaning columns",
+    "text": "Cleaning columns\nThe necessary columns are:\n\n‘geometry’ - IMPORTANT!\n‘highway’ - The road type according to the OSM’s key:value definition (will be changed to road_type)\n‘name’ - Streets name (if available)\n\n\n\nCode\ncity_roads_linestrings = city_roads_linestrings[['geometry', 'highway', 'name']]\ncity_roads_linestrings.rename({\"highway\": \"road_type\"}, axis=\"columns\", inplace=True) # Rename column\n\n\nThe clean gdf contains 1776 features and 3 attributes",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#reproject-the-crs",
+    "href": "projects/01_basic_mapping_with_OSM.html#reproject-the-crs",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Reproject the CRS",
+    "text": "Reproject the CRS\nBefore we add the length of the segments, we have to check the gdf’s CRS to see if it has meaningful units of measurement:\n\n\nCode\n# Check gdf CRS \ncity_roads_linestrings.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\nprint(city_roads_linestrings.geometry.length.head())\n\n\nelement  id      \nway      31661888    0.008288\n         31664220    0.004763\n         31664319    0.001693\n         31664320    0.001673\n         31664581    0.003211\ndtype: float64\n\n\nIn WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.\n\n\n\n\n\n\nTip\n\n\n\nFor a full list of all the available CRSs, check epsg.io site\n\n\n\n\nCode\ncity_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)\n\n\nSo now, if we check the CRS we’ll get:\n\n\nCode\ncity_roads_UTM.crs\n\n\n&lt;Projected CRS: EPSG:32636&gt;\nName: WGS 84 / UTM zone 36N\nAxis Info [cartesian]:\n- E[east]: Easting (metre)\n- N[north]: Northing (metre)\nArea of Use:\n- name: Between 30°E and 36°E, northern hemisphere between equator and 84°N, onshore and offshore. Belarus. Cyprus. Egypt. Ethiopia. Finland. Israel. Jordan. Kenya. Lebanon. Moldova. Norway. Russian Federation. Saudi Arabia. Sudan. Syria. Türkiye (Turkey). Uganda. Ukraine.\n- bounds: (30.0, 0.0, 36.0, 84.0)\nCoordinate Operation:\n- name: UTM zone 36N\n- method: Transverse Mercator\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nAnd if we check the length of the first few features, we’ll get:\n\n\nCode\nprint(city_roads_UTM.geometry.length.head())\n\n\nelement  id      \nway      31661888    781.878730\n         31664220    528.026825\n         31664319    173.824444\n         31664320    168.902683\n         31664581    355.949285\ndtype: float64",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#adding-length-attribute",
+    "href": "projects/01_basic_mapping_with_OSM.html#adding-length-attribute",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Adding ‘length’ attribute",
+    "text": "Adding ‘length’ attribute\n\n\nCode\ncity_roads_UTM['length'] = round(city_roads_UTM.geometry.length, 2)\ncity_roads_UTM.head()\n\n\n\n\n\n\n\n\n\n\ngeometry\nroad_type\nname\nlength\n\n\nelement\nid\n\n\n\n\n\n\n\n\nway\n31661888\nLINESTRING (677111.155 3559979.322, 677120.526...\ntertiary\nמשה שרת\n781.88\n\n\n31664220\nLINESTRING (677908.092 3560027.002, 677907.53 ...\ntertiary\nבית העם\n528.03\n\n\n31664319\nLINESTRING (677624.453 3560007.537, 677511.922...\nliving_street\nארלוזורוב\n173.82\n\n\n31664320\nLINESTRING (677638.008 3559750.042, 677511.778...\nliving_street\nרמז\n168.90\n\n\n31664581\nLINESTRING (677334.865 3559994.22, 677332.286 ...\nresidential\nהפרדס\n355.95",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#calculating-the-total-length-of-each-road_type-value",
+    "href": "projects/01_basic_mapping_with_OSM.html#calculating-the-total-length-of-each-road_type-value",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Calculating the total length of each ‘road_type’ value",
+    "text": "Calculating the total length of each ‘road_type’ value\n\n\nCode\nroads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length'].sum())\nroads_types['perc. of total length'] = round((roads_types['length'] / sum(roads_types['length']) * 100), 2)\nroads_types.sort_values(by='length', ascending=False)\n\n\n\n\n\n\n\n\n\nlength\nperc. of total length\n\n\nroad_type\n\n\n\n\n\n\nresidential\n92854.33\n39.59\n\n\npath\n26805.91\n11.43\n\n\ntertiary\n23675.85\n10.10\n\n\ntrack\n20928.70\n8.92\n\n\nfootway\n20515.27\n8.75\n\n\nservice\n17467.23\n7.45\n\n\ncycleway\n10840.30\n4.62\n\n\nprimary\n9515.90\n4.06\n\n\nliving_street\n6876.08\n2.93\n\n\nsecondary\n3902.65\n1.66\n\n\nprimary_link\n453.12\n0.19\n\n\nmotorway_link\n314.84\n0.13\n\n\nsteps\n204.12\n0.09\n\n\nsecondary_link\n128.78\n0.05\n\n\npedestrian\n29.67\n0.01",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "projects/01_basic_mapping_with_OSM.html#advanced-action-items",
+    "href": "projects/01_basic_mapping_with_OSM.html#advanced-action-items",
+    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "section": "Advanced action-items",
+    "text": "Advanced action-items\nHere’s some advanced action-items which can be made on this project:\n\nDivide the road types into 3 bins - connectivity roads, local roads, walking pathways and bicycle routes\nCompare with other cities\nImprove visualization",
+    "crumbs": [
+      "Projects",
+      "Mapping a City's Road Network with OpenStreetMap"
+    ]
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About",
+    "section": "",
+    "text": "About this site",
+    "crumbs": [
+      "About"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Wellcome",
+    "section": "",
+    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html",
+    "href": "tutorials/00_create_folder.html",
+    "title": "Project Setup Guide",
+    "section": "",
+    "text": "My main goal with this project is to create a blog / web site about spatial analysis, with two main focuses: analysis project where I analyze a specific issue, and tutorial topics where I explain a specific issue (mostly for my future self!).\nI will be using Python, R and SQL with duckdb, utilizing Positron with Quarto\nInstead of trying to build the whole website at once, I’m using a “staged approach”:\n\nCreate some standalone .qmd files in organized subfolders.\nOnce initial content is ready, implement a Quarto Website structure to glue them together.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#initialize-the-environment",
+    "href": "tutorials/00_create_folder.html#initialize-the-environment",
+    "title": "Project Setup Guide",
+    "section": "1. Initialize the Environment",
+    "text": "1. Initialize the Environment\nI started by creating an R project folder in Positron with renv for reproducible R dependencies and Git-ready version control. Next, I added a Python environment using UV: {pwsh} uv init",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#core-packages",
+    "href": "tutorials/00_create_folder.html#core-packages",
+    "title": "Project Setup Guide",
+    "section": "2. Core Packages",
+    "text": "2. Core Packages\nI installed the primary spatial and data science packages for each language:\nPython (uv add):\n\ngeopandas, rasterio (Vector/Raster analysis)\nduckdb (SQL)\nmatplotlib (Visualization)\nfolium, leafmap (Interactive Visualization)\njupyter (Engine support)\n\nR (install.packages):\n\ntidyverse (Data Science packages collection)\nsf (Vector analysis)\nterra (Raster analysis)\nreticulate (The bridge between R and Python)\n\n\n\n\n\n\n\nNote\n\n\n\nI am using reticulate for the integration between R and Python environments in the same *.qmd file.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#the-environment-bridge",
+    "href": "tutorials/00_create_folder.html#the-environment-bridge",
+    "title": "Project Setup Guide",
+    "section": "3. The environment Bridge",
+    "text": "3. The environment Bridge\nThe biggest challenge was ensuring reticulate could find the uv environment when rendering files inside subfolders.\nFor local work on Positron, I use a .Renviron file in the project root, which is Git-ignored:\n# .Renviron (Local only!)\nRETICULATE_PYTHON = \"../.venv/Scripts/python.exe\"\n\n\n\n\n\n\nNote\n\n\n\nIn this manner, the .qmd files need to be inside a one-level sub-folder and not directly in the project root. For more flexibility, a full path should be provided",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#folder-structure",
+    "href": "tutorials/00_create_folder.html#folder-structure",
+    "title": "Project Setup Guide",
+    "section": "4. Folder Structure",
+    "text": "4. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready! (For the meantime)",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  }
+]
