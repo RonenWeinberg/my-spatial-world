@@ -1,0 +1,43 @@
+project:
+  type: website
+  
+date: last-modified
+date-format: DD/MM/YYYY
+
+website:
+  title: "My Spatial World"
+  sidebar:
+    style: "docked"
+    search: true
+    collapse-level: 1
+    contents:
+      - section: Tutorials
+        contents:
+          - auto: "tutorials/*.qmd"
+
+      - section: Projects
+        contents:
+          - auto: "projects/*.qmd"
+
+      - about.qmd
+
+format:
+  html:
+    theme:
+      - materia
+      - brand
+    css: styles.css
+    toc: true
+    code-overflow: wrap
+
+execute: 
+  freeze: auto
+  echo: true
+  working-dir: project
+  python: ../.venv/Scripts/python.exe
+
+
+
+
+
+
