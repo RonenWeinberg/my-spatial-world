@@ -27,27 +27,25 @@ I installed the primary spatial and data science packages for each language:
 
 **Python** (`uv add`):
 
-        
-- `geopandas`, `rasterio` (Vector/Raster analysis)
+-   `geopandas`, `rasterio` (Vector/Raster analysis)
 
-- `duckdb` (SQL)
+-   `duckdb` (SQL)
 
-- `matplotlib` (Visualization)
+-   `matplotlib` (Visualization)
 
-- `folium`, `leafmap` (Interactive Visualization)
+-   `folium`, `leafmap` (Interactive Visualization)
 
-- `jupyter` (Engine support)
-
+-   `jupyter` (Engine support)
 
 **R** (`install.packages`):
-      
-- `tidyverse` (Data Science packages collection)
 
-- `sf` (Vector analysis)
+-   `tidyverse` (Data Science packages collection)
 
-- `terra` (Raster analysis)
+-   `sf` (Vector analysis)
 
-- `reticulate` (The bridge between R and Python)
+-   `terra` (Raster analysis)
+
+-   `reticulate` (The bridge between R and Python)
 
 ::: callout-note
 I am using `reticulate` for the integration between R and Python environments in the same `*.qmd` file.
@@ -72,8 +70,41 @@ In this manner, the `.qmd` files need to be inside a one-level sub-folder and no
 
 The repository is organized into two main content folders:
 
-- `projects/`: Analysis projects
+-   `projects/`: Analysis projects
 
-- `tutorials/`: General guides
+-   `tutorials/`: General guides
 
-**And now our repository is ready! (For the meantime)**
+**And now our repository is ready!**
+
+# Creating the Website
+
+## 1. Implement a Quarto Website Project
+
+::: callout-tip
+[Quarto](https://quarto.org/) has good site with guides and explanations about its files and projects format
+:::
+
+After creating the first few `.qmd` files, it's time to implement the Website Project. First I created a separate 'test' folder for the Quarto Website Project. That gave me the chance to "play" and test the features with this format in a clean and safe environment.
+
+After familiarizing myself with the Project's format, I copied the relevant files: `_quarto.yml`, `index.qmd`, `about.qmd` and `styles.css` to the repository root.
+
+In `_quarto.yml` file added the line:
+
+```         
+project:
+  output-dir: docs
+```
+
+Doing this, make deployment of the page through GitHub Pages, much easier.
+
+## 2. Publish in GitHub
+
+Once the site is updated, the necessary steps are:
+
+-  `{pwsh} quarto render` 
+
+-  `{pwsh} git add .` 
+
+- `commit`
+
+- `push`

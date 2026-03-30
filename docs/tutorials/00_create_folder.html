@@ -171,6 +171,11 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#the-environment-bridge" id="toc-the-environment-bridge" class="nav-link" data-scroll-target="#the-environment-bridge">3. The environment Bridge</a></li>
   <li><a href="#folder-structure" id="toc-folder-structure" class="nav-link" data-scroll-target="#folder-structure">4. Folder Structure</a></li>
   </ul></li>
+  <li><a href="#creating-the-website" id="toc-creating-the-website" class="nav-link" data-scroll-target="#creating-the-website">Creating the Website</a>
+  <ul class="collapse">
+  <li><a href="#implement-a-quarto-website-project" id="toc-implement-a-quarto-website-project" class="nav-link" data-scroll-target="#implement-a-quarto-website-project">1. Implement a Quarto Website Project</a></li>
+  <li><a href="#publish-in-github" id="toc-publish-in-github" class="nav-link" data-scroll-target="#publish-in-github">2. Publish in GitHub</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -277,7 +282,42 @@ Note
 <li><p><code>projects/</code>: Analysis projects</p></li>
 <li><p><code>tutorials/</code>: General guides</p></li>
 </ul>
-<p><strong>And now our repository is ready! (For the meantime)</strong></p>
+<p><strong>And now our repository is ready!</strong></p>
+</section>
+</section>
+<section id="creating-the-website" class="level1">
+<h1>Creating the Website</h1>
+<section id="implement-a-quarto-website-project" class="level2">
+<h2 class="anchored" data-anchor-id="implement-a-quarto-website-project">1. Implement a Quarto Website Project</h2>
+<div class="callout callout-style-default callout-tip callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Tip
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p><a href="https://quarto.org/">Quarto</a> has good site with guides and explanations about its files and projects format</p>
+</div>
+</div>
+<p>After creating the first few <code>.qmd</code> files, it’s time to implement the Website Project. First I created a separate ‘test’ folder for the Quarto Website Project. That gave me the chance to “play” and test the features with this format in a clean and safe environment.</p>
+<p>After familiarizing myself with the Project’s format, I copied the relevant files: <code>_quarto.yml</code>, <code>index.qmd</code>, <code>about.qmd</code> and <code>styles.css</code> to the repository root.</p>
+<p>In <code>_quarto.yml</code> file added the line:</p>
+<pre><code>project:
+  output-dir: docs</code></pre>
+<p>Doing this, make deployment of the page through GitHub Pages, much easier.</p>
+</section>
+<section id="publish-in-github" class="level2">
+<h2 class="anchored" data-anchor-id="publish-in-github">2. Publish in GitHub</h2>
+<p>Once the site is updated, the necessary steps are:</p>
+<ul>
+<li><p><code>{pwsh} quarto render</code></p></li>
+<li><p><code>{pwsh} git add .</code></p></li>
+<li><p><code>commit</code></p></li>
+<li><p><code>push</code></p></li>
+</ul>
 
 
 </section>

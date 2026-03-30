@@ -81,7 +81,7 @@
     "href": "projects/01_basic_mapping_with_OSM.html#define-the-place-boundaries",
     "title": "Mapping a City’s Road Network with OpenStreetMap",
     "section": "Define the place / boundaries",
-    "text": "Define the place / boundaries\nFirst, we’ll get the city boundaries using the ox.geocode_to_gdf() function. This has 2 main roles:\n\nMake sure that OSM recognizes the place’s name.\nCreate a polygon of the place’s border which we can use later\n\n\n\nCode\ncity_name = \"Hod Hasharon, Israel\"\n\nboundary = ox.geocode_to_gdf(city_name)\nboundary.head()\n\n\n\n\n\n\n\n\n\ngeometry\nbbox_west\nbbox_south\nbbox_east\nbbox_north\nplace_id\nosm_type\nosm_id\nlat\nlon\nclass\ntype\nplace_rank\nimportance\naddresstype\nname\ndisplay_name\n\n\n\n\n0\nPOLYGON ((34.87115 32.13514, 34.87122 32.13287...\n34.871145\n32.128648\n34.925727\n32.171671\n194746259\nway\n90998117\n32.14995\n34.885125\nplace\ntown\n18\n0.535236\ntown\nHod HaSharon\nHod HaSharon, Petah Tikva Subdistrict, Center ...\n\n\n\n\n\n\n\nboundary object type: geopandas.geodataframe.GeoDataFrame\n\n\nCode\n# Confirm CRS:\nboundary.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\n# Basic plot\nboundary.plot()",
+    "text": "Define the place / boundaries\nFirst, we’ll get the city boundaries using the ox.geocode_to_gdf() function. This has 2 main roles:\n\nMake sure that OSM recognizes the place’s name.\nCreate a polygon of the place’s border which we can use later\n\n\n\nCode\ncity_name = \"Hod Hasharon, Israel\"\n\nboundary = ox.geocode_to_gdf(city_name)\nboundary.head()\n\n\n\n\n\n\n\n\n\ngeometry\nbbox_west\nbbox_south\nbbox_east\nbbox_north\nplace_id\nosm_type\nosm_id\nlat\nlon\nclass\ntype\nplace_rank\nimportance\naddresstype\nname\ndisplay_name\n\n\n\n\n0\nPOLYGON ((34.87115 32.13514, 34.87122 32.13287...\n34.871145\n32.128648\n34.925727\n32.171671\n194746259\nway\n90998117\n32.14995\n34.885125\nplace\ntown\n18\n0.535236\ntown\nHod HaSharon\nHod HaSharon, Petah Tikva Subdistrict, Center ...\n\n\n\n\n\n\n\nboundary object type: geopandas.geodataframe.GeoDataFrame\nboundary CRS:\n\n\nCode\n# Confirm CRS:\nboundary.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nboundary Basic plot:\n\n\nCode\n# Basic plot\nboundary.plot()",
     "crumbs": [
       "Projects",
       "Mapping a City's Road Network with OpenStreetMap"
@@ -125,18 +125,18 @@
     "href": "projects/01_basic_mapping_with_OSM.html#reproject-the-crs",
     "title": "Mapping a City’s Road Network with OpenStreetMap",
     "section": "Reproject the CRS",
-    "text": "Reproject the CRS\nBefore we add the length of the segments, we have to check the gdf’s CRS to see if it has meaningful units of measurement:\n\n\nCode\n# Check gdf CRS \ncity_roads_linestrings.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\nprint(city_roads_linestrings.geometry.length.head())\n\n\nelement  id      \nway      31661888    0.008288\n         31664220    0.004763\n         31664319    0.001693\n         31664320    0.001673\n         31664581    0.003211\ndtype: float64\n\n\nIn WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.\n\n\n\n\n\n\nTip\n\n\n\nFor a full list of all the available CRSs, check epsg.io site\n\n\n\n\nCode\ncity_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)\n\n\nSo now, if we check the CRS we’ll get:\n\n\nCode\ncity_roads_UTM.crs\n\n\n&lt;Projected CRS: EPSG:32636&gt;\nName: WGS 84 / UTM zone 36N\nAxis Info [cartesian]:\n- E[east]: Easting (metre)\n- N[north]: Northing (metre)\nArea of Use:\n- name: Between 30°E and 36°E, northern hemisphere between equator and 84°N, onshore and offshore. Belarus. Cyprus. Egypt. Ethiopia. Finland. Israel. Jordan. Kenya. Lebanon. Moldova. Norway. Russian Federation. Saudi Arabia. Sudan. Syria. Türkiye (Turkey). Uganda. Ukraine.\n- bounds: (30.0, 0.0, 36.0, 84.0)\nCoordinate Operation:\n- name: UTM zone 36N\n- method: Transverse Mercator\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nAnd if we check the length of the first few features, we’ll get:\n\n\nCode\nprint(city_roads_UTM.geometry.length.head())\n\n\nelement  id      \nway      31661888    781.878730\n         31664220    528.026825\n         31664319    173.824444\n         31664320    168.902683\n         31664581    355.949285\ndtype: float64",
+    "text": "Reproject the CRS\nBefore we add the length of the segments, we have to check the gdf’s CRS to see if it has meaningful units of measurement:\n\n\nCode\n# Check gdf CRS \ncity_roads_linestrings.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\ncity_roads_linestrings.geometry.length.head()\n\n\nelement  id      \nway      31661888    0.008288\n         31664220    0.004763\n         31664319    0.001693\n         31664320    0.001673\n         31664581    0.003211\ndtype: float64\n\n\nIn WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.\n\n\n\n\n\n\nTip\n\n\n\nFor a full list of all the available CRSs, check epsg.io site\n\n\n\n\nCode\ncity_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)\n\n\nSo now, if we check the CRS we’ll get:\n\n\nCode\ncity_roads_UTM.crs\n\n\n&lt;Projected CRS: EPSG:32636&gt;\nName: WGS 84 / UTM zone 36N\nAxis Info [cartesian]:\n- E[east]: Easting (metre)\n- N[north]: Northing (metre)\nArea of Use:\n- name: Between 30°E and 36°E, northern hemisphere between equator and 84°N, onshore and offshore. Belarus. Cyprus. Egypt. Ethiopia. Finland. Israel. Jordan. Kenya. Lebanon. Moldova. Norway. Russian Federation. Saudi Arabia. Sudan. Syria. Türkiye (Turkey). Uganda. Ukraine.\n- bounds: (30.0, 0.0, 36.0, 84.0)\nCoordinate Operation:\n- name: UTM zone 36N\n- method: Transverse Mercator\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nAnd if we check the length of the first few features, we’ll get:\n\n\nCode\ncity_roads_UTM.geometry.length.head()\n\n\nelement  id      \nway      31661888    781.878730\n         31664220    528.026825\n         31664319    173.824444\n         31664320    168.902683\n         31664581    355.949285\ndtype: float64",
     "crumbs": [
       "Projects",
       "Mapping a City's Road Network with OpenStreetMap"
     ]
   },
   {
-    "objectID": "projects/01_basic_mapping_with_OSM.html#adding-length-attribute",
-    "href": "projects/01_basic_mapping_with_OSM.html#adding-length-attribute",
+    "objectID": "projects/01_basic_mapping_with_OSM.html#adding-length-m-attribute",
+    "href": "projects/01_basic_mapping_with_OSM.html#adding-length-m-attribute",
     "title": "Mapping a City’s Road Network with OpenStreetMap",
-    "section": "Adding ‘length’ attribute",
-    "text": "Adding ‘length’ attribute\n\n\nCode\ncity_roads_UTM['length'] = round(city_roads_UTM.geometry.length, 2)\ncity_roads_UTM.head()\n\n\n\n\n\n\n\n\n\n\ngeometry\nroad_type\nname\nlength\n\n\nelement\nid\n\n\n\n\n\n\n\n\nway\n31661888\nLINESTRING (677111.155 3559979.322, 677120.526...\ntertiary\nמשה שרת\n781.88\n\n\n31664220\nLINESTRING (677908.092 3560027.002, 677907.53 ...\ntertiary\nבית העם\n528.03\n\n\n31664319\nLINESTRING (677624.453 3560007.537, 677511.922...\nliving_street\nארלוזורוב\n173.82\n\n\n31664320\nLINESTRING (677638.008 3559750.042, 677511.778...\nliving_street\nרמז\n168.90\n\n\n31664581\nLINESTRING (677334.865 3559994.22, 677332.286 ...\nresidential\nהפרדס\n355.95",
+    "section": "Adding ‘length (m)’ attribute",
+    "text": "Adding ‘length (m)’ attribute\n\n\nCode\ncity_roads_UTM['length (m)'] = round(city_roads_UTM.geometry.length, 2)\ncity_roads_UTM.head()\n\n\n\n\n\n\n\n\n\n\ngeometry\nroad_type\nname\nlength (m)\n\n\nelement\nid\n\n\n\n\n\n\n\n\nway\n31661888\nLINESTRING (677111.155 3559979.322, 677120.526...\ntertiary\nמשה שרת\n781.88\n\n\n31664220\nLINESTRING (677908.092 3560027.002, 677907.53 ...\ntertiary\nבית העם\n528.03\n\n\n31664319\nLINESTRING (677624.453 3560007.537, 677511.922...\nliving_street\nארלוזורוב\n173.82\n\n\n31664320\nLINESTRING (677638.008 3559750.042, 677511.778...\nliving_street\nרמז\n168.90\n\n\n31664581\nLINESTRING (677334.865 3559994.22, 677332.286 ...\nresidential\nהפרדס\n355.95",
     "crumbs": [
       "Projects",
       "Mapping a City's Road Network with OpenStreetMap"
@@ -147,7 +147,7 @@
     "href": "projects/01_basic_mapping_with_OSM.html#calculating-the-total-length-of-each-road_type-value",
     "title": "Mapping a City’s Road Network with OpenStreetMap",
     "section": "Calculating the total length of each ‘road_type’ value",
-    "text": "Calculating the total length of each ‘road_type’ value\n\n\nCode\nroads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length'].sum())\nroads_types['perc. of total length'] = round((roads_types['length'] / sum(roads_types['length']) * 100), 2)\nroads_types.sort_values(by='length', ascending=False)\n\n\n\n\n\n\n\n\n\nlength\nperc. of total length\n\n\nroad_type\n\n\n\n\n\n\nresidential\n92854.33\n39.59\n\n\npath\n26805.91\n11.43\n\n\ntertiary\n23675.85\n10.10\n\n\ntrack\n20928.70\n8.92\n\n\nfootway\n20515.27\n8.75\n\n\nservice\n17467.23\n7.45\n\n\ncycleway\n10840.30\n4.62\n\n\nprimary\n9515.90\n4.06\n\n\nliving_street\n6876.08\n2.93\n\n\nsecondary\n3902.65\n1.66\n\n\nprimary_link\n453.12\n0.19\n\n\nmotorway_link\n314.84\n0.13\n\n\nsteps\n204.12\n0.09\n\n\nsecondary_link\n128.78\n0.05\n\n\npedestrian\n29.67\n0.01",
+    "text": "Calculating the total length of each ‘road_type’ value\n\n\nCode\nroads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length (m)'].sum())\nroads_types['percent of total length'] = round((roads_types['length (m)'] / sum(roads_types['length (m)']) * 100), 2)\nroads_types.sort_values(by='length (m)', ascending=False)\n\n\n\n\n\n\n\n\n\nlength (m)\npercent of total length\n\n\nroad_type\n\n\n\n\n\n\nresidential\n92854.33\n39.59\n\n\npath\n26805.91\n11.43\n\n\ntertiary\n23675.85\n10.10\n\n\ntrack\n20928.70\n8.92\n\n\nfootway\n20515.27\n8.75\n\n\nservice\n17467.23\n7.45\n\n\ncycleway\n10840.30\n4.62\n\n\nprimary\n9515.90\n4.06\n\n\nliving_street\n6876.08\n2.93\n\n\nsecondary\n3902.65\n1.66\n\n\nprimary_link\n453.12\n0.19\n\n\nmotorway_link\n314.84\n0.13\n\n\nsteps\n204.12\n0.09\n\n\nsecondary_link\n128.78\n0.05\n\n\npedestrian\n29.67\n0.01",
     "crumbs": [
       "Projects",
       "Mapping a City's Road Network with OpenStreetMap"
@@ -230,7 +230,29 @@
     "href": "tutorials/00_create_folder.html#folder-structure",
     "title": "Project Setup Guide",
     "section": "4. Folder Structure",
-    "text": "4. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready! (For the meantime)",
+    "text": "4. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready!",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
+    "href": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
+    "title": "Project Setup Guide",
+    "section": "1. Implement a Quarto Website Project",
+    "text": "1. Implement a Quarto Website Project\n\n\n\n\n\n\nTip\n\n\n\nQuarto has good site with guides and explanations about its files and projects format\n\n\nAfter creating the first few .qmd files, it’s time to implement the Website Project. First I created a separate ‘test’ folder for the Quarto Website Project. That gave me the chance to “play” and test the features with this format in a clean and safe environment.\nAfter familiarizing myself with the Project’s format, I copied the relevant files: _quarto.yml, index.qmd, about.qmd and styles.css to the repository root.\nIn _quarto.yml file added the line:\nproject:\n  output-dir: docs\nDoing this, make deployment of the page through GitHub Pages, much easier.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#publish-in-github",
+    "href": "tutorials/00_create_folder.html#publish-in-github",
+    "title": "Project Setup Guide",
+    "section": "2. Publish in GitHub",
+    "text": "2. Publish in GitHub\nOnce the site is updated, the necessary steps are:\n\n{pwsh} quarto render\n{pwsh} git add .\ncommit\npush",
     "crumbs": [
       "Tutorials",
       "Project Setup Guide"

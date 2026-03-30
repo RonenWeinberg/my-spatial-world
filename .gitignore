@@ -4,7 +4,7 @@
 .Ruserdata
 .vscode
 .venv/
-/cache
+**/cache/
 .Renviron
 /.quarto/
 **/*.quarto_ipynb

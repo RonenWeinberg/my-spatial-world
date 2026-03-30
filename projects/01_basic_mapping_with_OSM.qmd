@@ -50,12 +50,14 @@ boundary.head()
 
 **`boundary` object type:** *`{python} type(boundary)`*
 
+**`boundary` CRS:**
+
 ```{python}
 # Confirm CRS:
 boundary.crs
 ```
 
-
+**`boundary` Basic plot:**
 
 ```{python}
 # Basic plot
@@ -163,8 +165,9 @@ city_roads_linestrings.crs
 ```
 
 ```{python}
-print(city_roads_linestrings.geometry.length.head())
+city_roads_linestrings.geometry.length.head()
 ```
+
 In WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.
 
 ::: {.callout-tip}
@@ -179,33 +182,26 @@ So now, if we check the CRS we'll get:
 ```{python}
 city_roads_UTM.crs
 ```
+
 And if we check the length of the first few features, we'll get:
 ```{python}
-print(city_roads_UTM.geometry.length.head())
+city_roads_UTM.geometry.length.head()
 ```
 
-## Adding 'length' attribute
+## Adding 'length (m)' attribute
 
 ```{python}
-city_roads_UTM['length'] = round(city_roads_UTM.geometry.length, 2)
+city_roads_UTM['length (m)'] = round(city_roads_UTM.geometry.length, 2)
 city_roads_UTM.head()
 ```
 ## Calculating the total length of each 'road_type' value
 
 ```{python}
-roads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length'].sum())
-roads_types['perc. of total length'] = round((roads_types['length'] / sum(roads_types['length']) * 100), 2)
-roads_types.sort_values(by='length', ascending=False)
+roads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length (m)'].sum())
+roads_types['percent of total length'] = round((roads_types['length (m)'] / sum(roads_types['length (m)']) * 100), 2)
+roads_types.sort_values(by='length (m)', ascending=False)
 ```
 
-```{python}
-#| echo: false
-
-# Road types calculation for the text below
-residential =  round(roads_types.loc['residential', 'perc. of total length'])
-connectivity = round(roads_types.loc['primary', 'perc. of total length']) + round(roads_types.loc['secondary', 'perc. of total length'])
-pathways = round(roads_types.loc['path', 'perc. of total length']) + round(roads_types.loc['footway', 'perc. of total length']) + round(roads_types.loc['cycleway', 'perc. of total length'])
-```
 
 # Plotting
 
@@ -251,6 +247,16 @@ city_roads_UTM.explore(column='road_type',
 ```
 
 # Conclusion
+
+```{python}
+#| echo: false
+
+# Road types calculation for the text below
+residential =  round(roads_types.loc['residential', 'percent of total length'])
+connectivity = round(roads_types.loc['primary', 'percent of total length']) + round(roads_types.loc['secondary', 'percent of total length'])
+pathways = round(roads_types.loc['path', 'percent of total length']) + round(roads_types.loc['footway', 'percent of total length']) + round(roads_types.loc['cycleway', 'percent of total length'])
+```
+
 As expected, in a suburban city like Hod Hasharon, most of the streets are residential type (~`{python} residential`%), in contrast to the small amount of primary and secondary types of roads (~`{python} connectivity`%) which play a key role in outer connectivity. This may be a contributing factor to morning traffic congestion.\
 The relatively high share of paths, footways and cycleways (~`{python} pathways`%) also suggests a mixed-use urban environment with accessible pedestrian and cycling routes. 
 
