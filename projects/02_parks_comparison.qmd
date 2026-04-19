@@ -1,5 +1,6 @@
 ---
 title: Cities' Public Parks Comparison
+categories: [Analysis, Python, OSM]
 ---
 
 # Overview
