@@ -314,7 +314,7 @@ map_plot("park_area_per_1k_pop", "Parks Area (Dunam) per 1,000 Population")
 
 ### Parks Coverage
 
-While park availability provides a general comparison, it does not capture how easily residents can actually reach these parks. Accessibility is estimated by creating 500-meters buffer around parks (representing approximate walking distance) and calculating their coverage relative to the total city's area.
+While park availability provides a general comparison, it does not capture how easily residents can actually reach these parks. Accessibility is estimated by creating 500-meters buffer around parks (representing approximate walking distance) and calculating their coverage relative to the total city area.
 
 ::: callout-note
 Land-use and residential distribution are not considered in this analysis.

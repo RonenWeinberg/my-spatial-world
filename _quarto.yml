@@ -40,6 +40,9 @@ execute:
   echo: true
   error: true
   warning: false
+  
+keep-ipynb: false
+
 
 quarto:
   python: ./.venv/Scripts/python.exe
