@@ -1,0 +1,12 @@
+{
+  "hash": "100f5fbff79e6730282ba544ce5016d9",
+  "result": {
+    "engine": "jupyter",
+    "markdown": "---\ntitle: Park Accessibility \n---\n\n::: {#deaae913 .cell renderings='[\"dark\"]' execution_count=1}\n\n::: {.cell-output .cell-output-stdout}\n```\nC:\\Users\\ronen\\Professional\\GIS\\spatial_project\\projects\nC:\\Users\\ronen\\Professional\\GIS\\spatial_project\\.venv\\Scripts\\pythonw.exe\n```\n:::\n:::\n\n\n# Overview\n\nIn this project I'm going to map the public parks in my town - Hod Hasharon, and check their surrounding environment. For this I'll use two OSM layers - `leisure: park` and `landuse: [all]`. Intersecting a buffer zone around the parks with the landuse layer, will map the area surrounding the parks.\n\nMapping those areas can \n\n::: {#079393b5 .cell execution_count=2}\n``` {.python .cell-code}\nimport osmnx as ox\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n```\n:::\n\n\n::: {#5b0d1741 .cell fig-height='3' fig-show='hold' fig-width='4' layout-ncol='3' execution_count=3}\n``` {.python .cell-code}\n# import city's boundary\ncities = [\"Hod Hasharon\", \"Kfar Sava\", \"Raanana\"]\nboundaries = {}\n\nfor city in cities:\n    boundaries[city] = ox.geocode_to_gdf(city)\n    ax = boundaries[city].plot()\n    ax.set_title(city)\n    plt.show()\n```\n\n::: {.cell-output .cell-output-display}\n![](02_parks_access_files/figure-html/cell-4-output-1.png){width=464 height=431}\n:::\n\n::: {.cell-output .cell-output-display}\n![](02_parks_access_files/figure-html/cell-4-output-2.png){width=602 height=419}\n:::\n\n::: {.cell-output .cell-output-display}\n![](02_parks_access_files/figure-html/cell-4-output-3.png){width=501 height=431}\n:::\n:::\n\n\n",
+    "supporting": [
+      "02_parks_access_files"
+    ],
+    "filters": [],
+    "includes": {}
+  }
+}

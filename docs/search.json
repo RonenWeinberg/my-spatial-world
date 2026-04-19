@@ -229,8 +229,8 @@
     "objectID": "tutorials/00_create_folder.html#folder-structure",
     "href": "tutorials/00_create_folder.html#folder-structure",
     "title": "Project Setup Guide",
-    "section": "4. Folder Structure",
-    "text": "4. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready!",
+    "section": "5. Folder Structure",
+    "text": "5. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready!",
     "crumbs": [
       "Tutorials",
       "Project Setup Guide"
@@ -256,6 +256,145 @@
     "crumbs": [
       "Tutorials",
       "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_access.html",
+    "href": "projects/02_parks_access.html",
+    "title": "Park Accessibility",
+    "section": "",
+    "text": "C:\\Users\\ronen\\Professional\\GIS\\spatial_project\\projects\nC:\\Users\\ronen\\Professional\\GIS\\spatial_project\\.venv\\Scripts\\pythonw.exe\n\n\n\nOverview\nIn this project I’m going to map the public parks in my town - Hod Hasharon, and check their surrounding environment. For this I’ll use two OSM layers - leisure: park and landuse: [all]. Intersecting a buffer zone around the parks with the landuse layer, will map the area surrounding the parks.\nMapping those areas can\n\n\nCode\nimport osmnx as ox\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\n\n\nCode\n# import city's boundary\ncities = [\"Hod Hasharon\", \"Kfar Sava\", \"Raanana\"]\nboundaries = {}\n\nfor city in cities:\n    boundaries[city] = ox.geocode_to_gdf(city)\n    ax = boundaries[city].plot()\n    ax.set_title(city)\n    plt.show()",
+    "crumbs": [
+      "Projects",
+      "Park Accessibility"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html",
+    "href": "projects/02_parks_comparison.html",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "In this project, I compare the availability, size and accessibility of public parks across three similar cities in central Israel, located near each other. This type of analysis can support urban planning and quality-of-life assessments.\nThe cities are:\n\nHod Hasharon (pop. ~63,000)\nKfar Sava (pop. ~101,000)\nRaanana (pop. ~75,000)\n\nThe cities are considered as “dormitory cities”, located in the southern Sharon region in Israel and have a high socio-economic level. All three cities have central parks as well as smaller parks spread throughout residential areas.\nThe comparison includes the number of parks, their total area, mean area, total area per 1,000 residents, and the relative coverage of 500-meters buffer zones.\n\n\n\nOpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.\n\n\n\n\n\n\nLooping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#data",
+    "href": "projects/02_parks_comparison.html#data",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "OpenStreetMap: leisure: park and landuse",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#tools",
+    "href": "projects/02_parks_comparison.html#tools",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "geopandas - Spatial analysis\nOSMnx - OpenStreetMap API\n\n\n\nCode\nimport osmnx as ox\nimport pandas as pd\nimport geopandas as gpd\nimport matplotlib.pyplot as plt\n\n\n\nCode\n# import city's boundary\ncities = [\"Hod Hasharon\", \"Kfar Sava\", \"Raanana\"]\nboundaries = {}\n\nfor city in cities:\n    boundaries[city] = ox.geocode_to_gdf(city)\n    ax = boundaries[city].plot()\n    ax.set_title(city)\n    plt.show()",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#spatial-data",
+    "href": "projects/02_parks_comparison.html#spatial-data",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "OpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "temp_files/overture_landuse.html",
+    "href": "temp_files/overture_landuse.html",
+    "title": "My Spatial World",
+    "section": "",
+    "text": "Code\nimport geopandas as gpd\nimport duckdb\nimport pandas as pd\n\n\n\n\nCode\n# Connect to in-memory database\ncon = duckdb.connect()\n\n\n\n\nCode\n# Load extensions\ncon.sql(\"INSTALL spatial; LOAD spatial\")\ncon.sql(\"INSTALL httpfs; LOAD httpfs\")\n\n\n\n\nCode\n# Configure s3 access\ncon.sql(\"SET s3_region = 'us-west-2';\")\n\n\n\n\nCode\n# Find the latest release\n\ncon.sql(\"\"\"\n    SET VARIABLE latest_release = (\n        SELECT latest FROM 'https://stac.overturemaps.org/catalog.json'\n    );\n\"\"\")\n\n\n\n\nCode\n# Show the latest release\n\ncon.sql(\"SELECT getvariable('latest_release');\").show()\n\n\n┌───────────────────────────────┐\n│ getvariable('latest_release') │\n│            varchar            │\n├───────────────────────────────┤\n│ 2026-03-18.0                  │\n└───────────────────────────────┘\n\n\n\n\n\nCode\ncon.sql(\"SELECT * FROM duckdb_variables();\").show()\n\n\n┌────────────────┬──────────────┬─────────┐\n│      name      │    value     │  type   │\n│    varchar     │   varchar    │ varchar │\n├────────────────┼──────────────┼─────────┤\n│ latest_release │ 2026-03-18.0 │ VARCHAR │\n└────────────────┴──────────────┴─────────┘\n\n\n\n\n\nCode\n# 1. Define theme and type of data\ntheme = \"base\"\not_type = \"land_use\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKB(geometry) as geom_binary -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df with geom_binary to gdf\n\nrel['geom_binary'] = rel['geom_binary'].apply(bytes)\n\nhh_landuse = gpd.GeoDataFrame(\n    rel.drop(columns=['geom_binary']),\n    geometry=gpd.GeoSeries.from_wkb(rel['geom_binary']),\n    crs=\"EPSG:4326\"\n)\n\n\n\n\nCode\ntype(hh_landuse)\n\n\ngeopandas.geodataframe.GeoDataFrame\n\n\n\n\nCode\n# Spatial query with un-changed geometry - JSON format\n# IMPORTANT: This query have the best! filtering\n\nrel2 = con.sql(\"\"\"\n    SELECT\n        id,\n        class,\n        subtype,\n        geometry\n    FROM read_parquet(\n        's3://overturemaps-us-west-2/release/2026-03-18.0/theme=base/type=land_use/*',\n        filename=true,\n        hive_partitioning=1\n    )\n    WHERE \n    -- Step 1: Use the bbox for lightning-fast pruning (The \"Coarse\" filter)\n    bbox.xmin &lt;= 34.9351 AND bbox.xmax &gt;= 34.8617 AND\n    bbox.ymin &lt;= 32.1834 AND bbox.ymax &gt;= 32.1311\n    -- Step 2: Only run the expensive math on the few rows that pass Step 1 (The \"Fine\" filter)\n    AND ST_Intersects(geometry, ST_MakeEnvelope(34.8617, 32.1311, 34.9351, 32.1834));\n\"\"\")\n\n\n\n\nCode\n# Convert the duckdb.query into gdf with 'arrow'\n\narrow_table = rel2.arrow()\n\ngdf_landuse = gpd.GeoDataFrame.from_arrow(arrow_table)\n\n\n\n\nCode\n#  Spatial query, geometery in WKT format\n\nrel3 = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKT(geometry) as geom_text -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df (geom_text) to gdf\n\ngdf_landuse_3 = gpd.GeoDataFrame(\n    rel3, \n    geometry=gpd.GeoSeries.from_wkt(rel3['geom_text'].astype(str)),\n    crs = \"EPSG:4326\")\n\n\n\n\nCode\nimport contextily as cx\nax = gdf_landuse.plot(alpha=0.5)\ncx.add_basemap(ax, crs=gdf_landuse.crs, source=cx.providers.CartoDB.Positron)\n\n\n\n\n\n\n\n\n\nBoundary,Decimal Degrees Minimum Latitude (South),32.1311∘ Maximum Latitude (North),32.1834∘ Minimum Longitude (West),34.8617∘ Maximum Longitude (East),34.9351∘\n\n\nCode\ntheme = \"divisions\"\not_type = \"division_area\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        class LIKE 'town' AND\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").arrow()\n\ncities = gpd.GeoDataFrame.from_arrow(rel)\n\n\n\n---------------------------------------------------------------------------\n\nBinderException                           Traceback (most recent call last)\n\nCell In[54], line 5\n\n      2 ot_type = \"division_area\"\n\n      4 # 2. Spatial query, geometery in binary format\n\n----&gt; 5 rel = con.sql(f\"\"\"\n\n      6     SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)\n\n      7     FROM read_parquet(\n\n      8     format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n\n      9     filename=true, hive_partitioning=1)\n\n     10     WHERE\n\n     11         class LIKE 'town' AND\n\n     12         bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n\n     13         bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\n     14 \"\"\").arrow()\n\n     16 cities = gpd.GeoDataFrame.from_arrow(rel)\n\n\n\nBinderException: Binder Error: Column \"capital_division_ids\" in EXCLUDE list not found in FROM clause\n\n\n\n\n\nCode\ncities\n\n\n\n\n\n\n\n\n\ngeometry\nsubtype\nclass\nnames\nwikidata\nlocal_type\npopulation\n\n\n\n\n0\nPOINT (34.89304 32.1562)\nlocality\ntown\n{'primary': 'הוד השרון', 'common': [('ar', 'هو...\nQ152379\n[(en, town)]\n64120\n\n\n1\nPOINT (34.90746 32.17735)\nlocality\ntown\n{'primary': 'כפר סבא', 'common': [('ar', 'كفار...\nQ152436\n[(en, town)]\n109091"
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#workflow",
+    "href": "projects/02_parks_comparison.html#workflow",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "Looping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#key-findings",
+    "href": "projects/02_parks_comparison.html#key-findings",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Key Findings",
+    "text": "Key Findings\n\nHod Hasharon has fewer parks overall, both by number and total area\nRaanana has the largest amount of parks, but their average area is the smallest, still it has the largest parks area per capita.\nKfar Sava has the largest average parks area",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#python-environment-setting-uv",
+    "href": "tutorials/00_create_folder.html#python-environment-setting-uv",
+    "title": "Project Setup Guide",
+    "section": "4. Python Environment Setting (‘uv’)",
+    "text": "4. Python Environment Setting (‘uv’)\nAnother challenge I was encountered in Positron, was to make sure that while Quarto uses Python, it uses to the local ‘uv’ environment (.venv), and not the base Python (without the necessary libraries). This problem is unique to ‘uv’ environment which isn’t activated manually. To solve this I used this Terminal command:\nPowerShell\n[...\\spatial_project]\n &gt;  setx QUARTO_PYTHON \".venv\\Scripts\\python.exe\"",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#basic-statistic",
+    "href": "projects/02_parks_comparison.html#basic-statistic",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Basic Statistic",
+    "text": "Basic Statistic\n\n\nCalculate parks statistics\n# Total numbers of parks per city:\ncities_gdf[\"parks_no\"] = cities_gdf[\"name\"].apply(\n    lambda x: len(parks[x]))\n\n# Total parks' area per city:\ncities_gdf[\"total_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].sum())/1000\n\n# Average parks' area per city:\ncities_gdf[\"mean_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].mean())/1000\n\n# Total parks' area per 1,000 population:\ncities_gdf[\"park_area_per_1k_pop\"] = round(cities_gdf[\"total_parks_area_dunam\"] / cities_gdf[\"population_k\"], 2)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nname\nNumber of Parks\nTotal Parks Area (Dunam)\nMean Parks Area (Dunam)\nParks Area (Dunam) per 1,000 Population\n\n\n\n\n0\nHod Hasharon\n63\n446.54\n7.09\n7.09\n\n\n1\nKfar Sava\n109\n831.53\n7.63\n8.23\n\n\n2\nRaanana\n179\n793.91\n4.44\n10.59\n\n\n\n\n\n\n\n\nTable 1: Summary Table\n\n\n\n\n\n\n\n\n                            \n                                            \n\n\nFigure 1: Cities’ Parks Statistics\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n1 Dunam = \\(1,000 m^2\\)\n\n\n\nNumber of ParksTotal Parks AreaMean Parks AreaParks Area per 1,000 Population\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nParks Coverage\nWhile park availability provides a general comparison, it does not capture how easily residents can actually reach these parks. Accessibility is estimated by creating 500-meters buffer around parks (representing approximate walking distance) and calculating their coverage relative to the total city’s area.\n\n\n\n\n\n\nNote\n\n\n\nLand-use and residential distribution are not considered in this analysis.\nThe results should be interpreted as a relative measure of spatial proximity rather than actual walking accessibility.\n\n\n\n\nCalculating parks buffer coverage area\n# Create buffer 500 m around the parks\ncities_gdf['parks_buffer'] = cities_gdf['name'].apply(lambda city_name: parks[city_name].buffer(500).union_all())\n\n# Define as geometry type column and set CRS\ncities_gdf.set_geometry(\"parks_buffer\", inplace=True)\ncities_gdf[\"parks_buffer\"] = cities_gdf[\"parks_buffer\"].set_crs(epsg=2039)\n\n# Calculating cities area\ncities_gdf[\"city_area\"] = cities_gdf.set_geometry(\"geometry\").area/1000\n\n# Calculating un-buffered area\ncities_gdf[\"unbuffered_area\"] = (\n    cities_gdf[\"geometry\"].difference(cities_gdf[\"parks_buffer\"]).area / 1000\n)\n\n\n# Calculating un-buffered percentage\ncities_gdf[\"unbuffered_perc\"] = cities_gdf[\"unbuffered_area\"] / cities_gdf[\"city_area\"] * 100\n\n\n\n\n\n\nHod HasharonKfar SavaRaanana\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Parks’ 500 meter buffer (green area) coverage area\n\n\n\nNote: Cities with large peripheral parks may appear more accessible in buffer-based analysis, even when those parks are less usable for daily access.\n\n\nKey Findings\n\nHod Hasharon has fewer parks overall, both by number and total area\nRaanana has the largest number of parks, but their average area is the smallest, nevertheless, it maintains the highest park area per capita.\nKfar Sava has the largest average parks area\nBoth Kfar Sava and Raanana have similar parks’ accessibility coverage characteristics which covers almost the whole cities area, while Hod Hasharon has a significant portion of its area outside the 500-meter accessibility. (Note: Most of the areas in south-west Hod Hasharon are open fields and industrial)",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#parks-spatial-characteristics",
+    "href": "projects/02_parks_comparison.html#parks-spatial-characteristics",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Parks Spatial Characteristics",
+    "text": "Parks Spatial Characteristics",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#parks-potential-accessibility",
+    "href": "projects/02_parks_comparison.html#parks-potential-accessibility",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Parks Potential Accessibility",
+    "text": "Parks Potential Accessibility\nIn this section, I’ll try to measure the potential parks accessibility in each city by two parameters:\n\nMapping the parks coverage by creating a 500 meters buffer around the parks.\nCalculating distances between each park and the city centre (city polygon’s centroid).\n\n\n\n\n\n\n\nNote\n\n\n\nIn this section parameters of land-use or residential areas are not being considered\n\n\n\nParks Coverage\n\n\nCalculating parks buffer coverage area\n# Create buffer 500 m around the parks\ncities_gdf['parks_buffer'] = cities_gdf['name'].apply(lambda city_name: parks[city_name].buffer(500).union_all())\n\n# Define as geometry type column and set CRS\ncities_gdf.set_geometry(\"parks_buffer\", inplace=True)\ncities_gdf[\"parks_buffer\"] = cities_gdf[\"parks_buffer\"].set_crs(epsg=2039)\n\n# Calculating cities area\ncities_gdf[\"city_area\"] = cities_gdf.set_geometry(\"geometry\").area/1000\n\n# Calculating un-buffered area\ncities_gdf[\"unbuffered_area\"] = cities_gdf.set_geometry(\"geometry\").overlay(cities_gdf.set_geometry(\"parks_buffer\"), how='difference').area/1000\n\n# Calculating un-buffered percentage\ncities_gdf[\"unbuffered_perc\"] = cities_gdf[\"unbuffered_area\"] / cities_gdf[\"city_area\"] * 100\n\n\n\n\n\n\nHod HasharonKfar SavaRaanana\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Parks’ 500 meter buffer (green area) coverage area",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#advanced-action-items",
+    "href": "projects/02_parks_comparison.html#advanced-action-items",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Advanced action-items",
+    "text": "Advanced action-items\nHere’s some advanced action-items which can be made on this project:\n\nNetwork Analysis for more accurate accessibility analysis\nAccurate land-use and population distribution mapping can refine the parks spreads relatively to residents areas",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
     ]
   }
 ]

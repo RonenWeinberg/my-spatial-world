@@ -32,7 +32,7 @@ format:
     css: styles.css
     toc: true
     code-overflow: wrap
-    code-fold: show
+    code-fold: true
     lightbox: true
 
 execute: 
@@ -40,11 +40,10 @@ execute:
   echo: true
   error: true
   warning: false
+
+quarto:
+  python: ./.venv/Scripts/python.exe
   
-
-
-
-
 
 
 

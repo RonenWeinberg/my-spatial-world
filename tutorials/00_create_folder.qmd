@@ -66,7 +66,17 @@ RETICULATE_PYTHON = "../.venv/Scripts/python.exe"
 In this manner, the `.qmd` files need to be inside a one-level sub-folder and not directly in the project root. For more flexibility, a full path should be provided
 :::
 
-## 4. Folder Structure
+## 4. Python Environment Setting ('uv')
+
+Another challenge I was encountered in Positron, was to make sure that while Quarto uses Python, it uses to the local 'uv' environment (`.venv`), and not the base Python (without the necessary libraries). This problem is unique to 'uv' environment which isn't activated manually. To solve this I used this Terminal command:
+
+```
+PowerShell
+[...\spatial_project]
+ >  setx QUARTO_PYTHON ".venv\Scripts\python.exe"
+```
+
+## 5. Folder Structure
 
 The repository is organized into two main content folders:
 
