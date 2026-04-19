@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.37">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Mapping a City’s Road Network with OpenStreetMap – My Spatial World</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -67,15 +70,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <meta name="quarto:offset" content="../">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-7f8f88aac4f3542376d5c11b86a4c14d.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-350277b54e5adb5f3740be1c22d380e0.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-58cf75aba0d8b4019f527fe632109df6.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script src="../site_libs/quarto-contrib/glightbox/glightbox.min.js"></script>
 <link href="../site_libs/quarto-contrib/glightbox/glightbox.min.css" rel="stylesheet">
 <link href="../site_libs/quarto-contrib/glightbox/lightbox.css" rel="stylesheet">
@@ -306,7 +308,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h1>Getting the data</h1>
 <p>We’ll start by importing the necessary packages:</p>
 <div id="e5084c5b" class="cell" data-execution_count="1">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> osmnx <span class="im">as</span> ox</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
@@ -321,7 +323,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Create a polygon of the place’s border which we can use later</p></li>
 </ul>
 <div id="e526513d" class="cell" data-execution_count="2">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>city_name <span class="op">=</span> <span class="st">"Hod Hasharon, Israel"</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
@@ -385,7 +387,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p><strong><code>boundary</code> object type:</strong> <em>geopandas.geodataframe.GeoDataFrame</em></p>
 <p><strong><code>boundary</code> CRS:</strong></p>
 <div id="f36621c5" class="cell" data-execution_count="3">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Confirm CRS:</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>boundary.crs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -406,7 +408,7 @@ Datum: World Geodetic System 1984 ensemble
 </div>
 <p><strong><code>boundary</code> Basic plot:</strong></p>
 <div id="bfe8dc69" class="cell" data-execution_count="4">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Basic plot</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>boundary.plot()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -443,7 +445,7 @@ We’ll use <code>'road_type': True</code> to retrieve the whole roads, paths an
 <h3 class="anchored" data-anchor-id="features_from_place">features_from_place()</h3>
 <p>This method uses the place name we confirmed earlier, it’s simpler method but depends on OSM’s place definitions:</p>
 <div id="8c6dc457" class="cell" data-execution_count="5">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Defining 'tags' (the value can be a list of specific features)</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>tags <span class="op">=</span> {<span class="st">'highway'</span>: <span class="va">True</span>}</span>
@@ -458,7 +460,7 @@ We’ll use <code>'road_type': True</code> to retrieve the whole roads, paths an
 <h3 class="anchored" data-anchor-id="features_from_polygon">features_from_polygon()</h3>
 <p>In this method we use the polygon object we created, which gives more control and especially useful with custom boundaries:</p>
 <div id="e32577af" class="cell" data-execution_count="6">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Using features_from_polygon()</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>city_roads_from_polygon <span class="op">=</span> ox.features_from_polygon(boundary.geometry.iloc[<span class="dv">0</span>],</span>
@@ -485,7 +487,7 @@ Note
 <section id="cleaning-and-filtering" class="level1">
 <h1>Cleaning and filtering</h1>
 <div id="98de9d14" class="cell" data-execution_count="7">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>city_roads.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -684,7 +686,7 @@ Note
 <h2 class="anchored" data-anchor-id="filtering-geometry-types">Filtering geometry types</h2>
 <p>Let’s check the geometry type we got, and filter out all non-LineString features</p>
 <div id="4a253573" class="cell" data-execution_count="8">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>city_roads.geometry.geom_type.value_counts()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -696,7 +698,7 @@ Name: count, dtype: int64</code></pre>
 </div>
 </div>
 <div id="d9a5a96a" class="cell" data-execution_count="9">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>city_roads_linestrings <span class="op">=</span> city_roads[</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    city_roads.geometry.geom_type.isin([<span class="st">"LineString"</span>, <span class="st">"MultiLineString"</span>])]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -726,7 +728,7 @@ Tip
 <li><p><strong>‘name’</strong> - Streets name (if available)</p></li>
 </ul>
 <div id="677ae818" class="cell" data-execution_count="10">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>city_roads_linestrings <span class="op">=</span> city_roads_linestrings[[<span class="st">'geometry'</span>, <span class="st">'highway'</span>, <span class="st">'name'</span>]]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>city_roads_linestrings.rename({<span class="st">"highway"</span>: <span class="st">"road_type"</span>}, axis<span class="op">=</span><span class="st">"columns"</span>, inplace<span class="op">=</span><span class="va">True</span>) <span class="co"># Rename column</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -742,7 +744,7 @@ Tip
 <h2 class="anchored" data-anchor-id="reproject-the-crs">Reproject the CRS</h2>
 <p>Before we add the length of the segments, we have to check the gdf’s CRS to see if it has meaningful units of measurement:</p>
 <div id="4df77261" class="cell" data-execution_count="11">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Check gdf CRS </span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>city_roads_linestrings.crs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -762,7 +764,7 @@ Datum: World Geodetic System 1984 ensemble
 </div>
 </div>
 <div id="2007c935" class="cell" data-execution_count="12">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>city_roads_linestrings.geometry.length.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -791,14 +793,14 @@ Tip
 </div>
 </div>
 <div id="289c04ef" class="cell" data-execution_count="13">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>city_roads_UTM <span class="op">=</span> city_roads_linestrings.to_crs(epsg<span class="op">=</span><span class="dv">32636</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 </div>
 <p>So now, if we check the CRS we’ll get:</p>
 <div id="a200282e" class="cell" data-execution_count="14">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>city_roads_UTM.crs</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -821,7 +823,7 @@ Datum: World Geodetic System 1984 ensemble
 </div>
 <p>And if we check the length of the first few features, we’ll get:</p>
 <div id="06bd1a42" class="cell" data-execution_count="15">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>city_roads_UTM.geometry.length.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
@@ -839,7 +841,7 @@ dtype: float64</code></pre>
 <section id="adding-length-m-attribute" class="level2">
 <h2 class="anchored" data-anchor-id="adding-length-m-attribute">Adding ‘length (m)’ attribute</h2>
 <div id="d67c459a" class="cell" data-execution_count="16">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>city_roads_UTM[<span class="st">'length (m)'</span>] <span class="op">=</span> <span class="bu">round</span>(city_roads_UTM.geometry.length, <span class="dv">2</span>)</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>city_roads_UTM.head()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
@@ -914,7 +916,7 @@ dtype: float64</code></pre>
 <section id="calculating-the-total-length-of-each-road_type-value" class="level2">
 <h2 class="anchored" data-anchor-id="calculating-the-total-length-of-each-road_type-value">Calculating the total length of each ‘road_type’ value</h2>
 <div id="fe73f460" class="cell" data-execution_count="17">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>roads_types <span class="op">=</span> pd.DataFrame(city_roads_UTM.groupby(<span class="st">'road_type'</span>)[<span class="st">'length (m)'</span>].<span class="bu">sum</span>())</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>roads_types[<span class="st">'percent of total length'</span>] <span class="op">=</span> <span class="bu">round</span>((roads_types[<span class="st">'length (m)'</span>] <span class="op">/</span> <span class="bu">sum</span>(roads_types[<span class="st">'length (m)'</span>]) <span class="op">*</span> <span class="dv">100</span>), <span class="dv">2</span>)</span>
@@ -1025,7 +1027,7 @@ dtype: float64</code></pre>
 <h1>Plotting</h1>
 <p>Before we plot the streets, we’ll define an ordered categorical type of the highway values according to <a href="https://wiki.openstreetmap.org/wiki/Map_features#Highway">OSM</a> and apply it to the <code>'road_type'</code> column in the gdf</p>
 <div id="2600bed8" class="cell" data-execution_count="18">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Create ordered list of highway values in the gdf</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pandas.api.types <span class="im">import</span> CategoricalDtype</span>
@@ -1038,7 +1040,7 @@ dtype: float64</code></pre>
 </div>
 <p>Now we can create a simple plot of Hod Hasharon’s streets with the categorical symbology:</p>
 <div id="2ba5aa30" class="cell" data-execution_count="19">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(figsize<span class="op">=</span>(<span class="dv">10</span>, <span class="dv">8</span>))</span>
@@ -1066,7 +1068,7 @@ dtype: float64</code></pre>
 </div>
 </div>
 <div id="69a75499" class="cell" data-execution_count="20">
-<details open="" class="code-fold">
+<details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>city_roads_UTM.explore(column<span class="op">=</span><span class="st">'road_type'</span>,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>                       cmap<span class="op">=</span><span class="st">"plasma_r"</span>,</span>
