@@ -1,14 +1,24 @@
-# Spatial Project
+# My Spatial World
 
-## Overview
-This is my personal spatial project in which I aim to 2 main targets:
+Hi, I’m Ronen Weinberg.
 
-1. Primary - create a collection of spatial analysis projects
-2. Secondary - create a collection of tutorial docs regarding spatial analysis (and more...)
+This site is my small corner of the spatial world — a place where I explore spatial analysis through projects and occasional tutorials.
 
-My main objectives are:
+Everything here is built using open-source data and free tools.
+Most of the work is part of my own learning process, especially on the technical side — experimenting, testing ideas, and gradually improving along the way.
 
-1. Use Python, R and SQL (duckdb) separately or combined for the projects
-2. Use open-source data sets, like OSM, Overture, Natural Earth and so on...
-3. Use data formats - vectors and raster with emphasise on modern file types (GeoParquet, COG and so on...)
-4. Cloud-native workflow (no heavy local downloads)
+## What you’ll find here
+
+* Spatial analysis projects focused on real-world questions
+* Step-by-step workflows and technical explorations
+* Occasional tutorials and notes
+* Experiments with maps, data, and design
+
+The projects may focus on different aspects each time — sometimes on the analysis itself, sometimes on data sources, and sometimes on map design.
+
+## A note
+
+This is not a polished portfolio, but rather an evolving workspace.
+For me it’s a hobby, and I use it for a learning process, and a way to document things that interest me.
+
+If it happens to help others along the way — even better.

@@ -1,5 +1,53 @@
 ---
-title: "About"
+title: "Ronen Weinberg"
+date: ""
+toc: false
+about:
+  template: trestles
+  links: 
+    - icon: linkedin
+      href: https://www.linkedin.com/in/ronen-weinberg-07545324b/
+    - icon: github
+      href: https://github.com/RonenWeinberg/my-spatial-world
 ---
 
-About this site
+My name is Ronen Weinberg.
+
+I’ve been fascinated by maps for as long as I can remember.
+Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.
+
+## Background
+
+I am a 30-year military veteran, where I worked as an imagery analyst and was also involved in training.
+My academic background includes a B.A. in Political Science and an M.A. in Geography.
+
+## Why spatial analysis
+
+For me, spatial analysis sits at a unique intersection:
+
+* Human and environmental behaviour
+* Technical and analytical work
+* Visual thinking, design, and a bit of artistry
+
+It combines structure and creativity in a way that makes the process as interesting as the results.
+
+## About this site
+
+This site is a personal project — a space where I teach myself, mainly on the technical side, by building and documenting real examples.
+
+Everything here is based on open-source datasets and free tools.
+The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.
+
+The topics I explore vary, but often focus on:
+
+* Analysis workflows
+* Working with spatial databases and data sources
+* Map design and visualization
+
+## A personal note
+
+This is my “corner of the world” — a place driven by curiosity and personal interest.
+It’s first and foremost a hobby.
+
+That said, I hope that some of what’s here can also be useful to others who are learning, exploring, or just enjoy maps as much as I do.
+

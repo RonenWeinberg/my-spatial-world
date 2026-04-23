@@ -174,19 +174,73 @@
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "Ronen Weinberg",
     "section": "",
-    "text": "About this site",
+    "text": "My name is Ronen Weinberg.\nI’ve been fascinated by maps for as long as I can remember. Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.",
     "crumbs": [
-      "About"
+      "Ronen Weinberg"
+    ]
+  },
+  {
+    "objectID": "about.html#background",
+    "href": "about.html#background",
+    "title": "Ronen Weinberg",
+    "section": "Background",
+    "text": "Background\nI am a 30-year military veteran, where I worked as an imagery analyst and was also involved in training. My academic background includes a B.A. in Political Science and an M.A. in Geography.",
+    "crumbs": [
+      "Ronen Weinberg"
+    ]
+  },
+  {
+    "objectID": "about.html#why-spatial-analysis",
+    "href": "about.html#why-spatial-analysis",
+    "title": "Ronen Weinberg",
+    "section": "Why spatial analysis",
+    "text": "Why spatial analysis\nFor me, spatial analysis sits at a unique intersection:\n\nHuman and environmental behaviour\nTechnical and analytical work\nVisual thinking, design, and a bit of artistry\n\nIt combines structure and creativity in a way that makes the process as interesting as the results.",
+    "crumbs": [
+      "Ronen Weinberg"
+    ]
+  },
+  {
+    "objectID": "about.html#about-this-site",
+    "href": "about.html#about-this-site",
+    "title": "Ronen Weinberg",
+    "section": "About this site",
+    "text": "About this site\nThis site is a personal project — a space where I teach myself, mainly on the technical side, by building and documenting real examples.\nEverything here is based on open-source datasets and free tools. The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
+    "crumbs": [
+      "Ronen Weinberg"
+    ]
+  },
+  {
+    "objectID": "about.html#a-personal-note",
+    "href": "about.html#a-personal-note",
+    "title": "Ronen Weinberg",
+    "section": "A personal note",
+    "text": "A personal note\nThis is my “corner of the world” — a place driven by curiosity and personal interest. It’s first and foremost a hobby.\nThat said, I hope that some of what’s here can also be useful to others who are learning, exploring, or just enjoy maps as much as I do.",
+    "crumbs": [
+      "Ronen Weinberg"
     ]
   },
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "Wellcome",
+    "title": "Welcome to My Spatial World",
     "section": "",
-    "text": "This is a Quarto website.\nTo learn more about Quarto websites visit https://quarto.org/docs/websites."
+    "text": "Map of the world from 1565 (Wikimedia)\nHi, I’m Ronen Weinberg.\nThis site is my small corner of the spatial world — a place where I explore spatial analysis through projects and occasional tutorials.\nEverything here is built using open-source data and free tools. Most of the work is part of my own learning process, especially on the technical side — experimenting, testing ideas, and gradually improving along the way."
+  },
+  {
+    "objectID": "index.html#what-youll-find-here",
+    "href": "index.html#what-youll-find-here",
+    "title": "Welcome to My Spatial World",
+    "section": "What you’ll find here",
+    "text": "What you’ll find here\n\nSpatial analysis projects focused on real-world questions\nStep-by-step workflows and technical explorations\nOccasional tutorials and notes\nExperiments with maps, data, and design\n\nThe projects may focus on different aspects each time — sometimes on the analysis itself, sometimes on data sources, and sometimes on map design."
+  },
+  {
+    "objectID": "index.html#a-note",
+    "href": "index.html#a-note",
+    "title": "Welcome to My Spatial World",
+    "section": "A note",
+    "text": "A note\nThis is not a polished portfolio, but rather an evolving workspace. For me it’s a hobby, and I use it for a learning process, and a way to document things that interest me.\nIf it happens to help others along the way — even better."
   },
   {
     "objectID": "projects/02_parks_comparison.html",

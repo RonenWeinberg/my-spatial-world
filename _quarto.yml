@@ -13,21 +13,21 @@ website:
     style: "docked"
     search: true
     collapse-level: 1
-    contents:
-      - section: Tutorials
-        contents:
-          - auto: "tutorials/*.qmd"
-
+    contents:  
       - section: Projects
         contents:
           - auto: "projects/*.qmd"
+
+      - section: Tutorials
+        contents:
+          - auto: "tutorials/*.qmd"
 
       - about.qmd
 
 format:
   html:
     theme:
-      - materia
+      - sandstone
       - brand
     css: styles.css
     toc: true
