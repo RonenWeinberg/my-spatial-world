@@ -206,7 +206,7 @@
     "href": "about.html#about-this-site",
     "title": "Ronen Weinberg",
     "section": "About this site",
-    "text": "About this site\nThis site is a personal project — a space where I teach myself, mainly on the technical side, by building and documenting real examples.\nEverything here is based on open-source datasets and free tools. The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
+    "text": "About this site\nThis site is a personal project — a space where I focus on the technical side of spatial analysis by building and documenting real examples.\nEverything here is based on open-source datasets (e.g OSM) and free tools (e.g Python, R and DuckDB). The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
     "crumbs": [
       "Ronen Weinberg"
     ]
@@ -240,7 +240,7 @@
     "href": "index.html#a-note",
     "title": "Welcome to My Spatial World",
     "section": "A note",
-    "text": "A note\nThis is not a polished portfolio, but rather an evolving workspace. For me it’s a hobby, and I use it for a learning process, and a way to document things that interest me.\nIf it happens to help others along the way — even better."
+    "text": "A note\nThis is not a polished portfolio, but rather an evolving workspace. For me, this is a hobby — a way to facilitate my learning process and document topics that interest me.\nIf it happens to help others along the way — even better."
   },
   {
     "objectID": "projects/02_parks_comparison.html",

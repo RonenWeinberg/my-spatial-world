@@ -33,9 +33,9 @@ It combines structure and creativity in a way that makes the process as interest
 
 ## About this site
 
-This site is a personal project — a space where I teach myself, mainly on the technical side, by building and documenting real examples.
+This site is a personal project — a space where I focus on the technical side of spatial analysis by building and documenting real examples.
 
-Everything here is based on open-source datasets and free tools.
+Everything here is based on open-source datasets (e.g OSM) and free tools (e.g Python, R and DuckDB).
 The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.
 
 The topics I explore vary, but often focus on:
