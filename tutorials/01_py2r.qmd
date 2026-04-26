@@ -1,5 +1,6 @@
 ---
 title: "From Python to R and back....!"
+code-fold: false
 ---
 
 # Overview

@@ -1,5 +1,5 @@
 ---
-title: "Ronen Weinberg"
+title: "About this Site"
 date: ""
 toc: false
 about:
@@ -11,7 +11,7 @@ about:
       href: https://github.com/RonenWeinberg/my-spatial-world
 ---
 
-My name is Ronen Weinberg.
+My name is **Ronen Weinberg**.
 
 I’ve been fascinated by maps for as long as I can remember.
 Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.

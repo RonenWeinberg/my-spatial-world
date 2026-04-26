@@ -15,7 +15,7 @@
     "href": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
     "title": "From Python to R and back….!",
     "section": "Passing variable from Python to R",
-    "text": "Passing variable from Python to R\n\n\nCode\n# &lt;Py&gt;\n\n# Create Python variable py_x\npy_x = 10\nprint(py_x)\n\n\n10\n\n\nType of py_x: &lt;class ‘int’&gt;\n\n\nCode\n# &lt;R&gt;\n\n# Passing Python variable py_x to R \nr_x &lt;- py$py_x\nprint(r_x)\n\n\n[1] 10\n\n\nClass of r_x: integer",
+    "text": "Passing variable from Python to R\n\n# &lt;Py&gt;\n\n# Create Python variable py_x\npy_x = 10\nprint(py_x)\n\n10\n\n\nType of py_x: &lt;class ‘int’&gt;\n\n# &lt;R&gt;\n\n# Passing Python variable py_x to R \nr_x &lt;- py$py_x\nprint(r_x)\n\n[1] 10\n\n\nClass of r_x: integer",
     "crumbs": [
       "Tutorials",
       "From Python to R and back....!"
@@ -26,7 +26,7 @@
     "href": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
     "title": "From Python to R and back….!",
     "section": "Passing variable from R to Python",
-    "text": "Passing variable from R to Python\n\n\nCode\n# &lt;R&gt;\n\n# Create R variable r_y \nr_y &lt;- 20\nprint(r_y)\n\n\n[1] 20\n\n\nClass of r_y: numeric\n\n\nCode\n# &lt;Py&gt;\n\n# Passing the R variable r_y to Python \npy_y = r.r_y\nprint(py_y)\n\n\n20.0\n\n\nType of py_y: &lt;class ‘float’&gt;",
+    "text": "Passing variable from R to Python\n\n# &lt;R&gt;\n\n# Create R variable r_y \nr_y &lt;- 20\nprint(r_y)\n\n[1] 20\n\n\nClass of r_y: numeric\n\n# &lt;Py&gt;\n\n# Passing the R variable r_y to Python \npy_y = r.r_y\nprint(py_y)\n\n20.0\n\n\nType of py_y: &lt;class ‘float’&gt;",
     "crumbs": [
       "Tutorials",
       "From Python to R and back....!"
@@ -37,7 +37,7 @@
     "href": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
     "title": "From Python to R and back….!",
     "section": "Passing DataFrame from Python to R",
-    "text": "Passing DataFrame from Python to R\n\n\nCode\n# &lt;Py&gt;\n\n# Create a pandas df from .csv file\nimport pandas as pd\n\nurl = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv\"\n\npy_flights = pd.read_csv(url)\npy_flights.head()\n\n\n   year     month  passengers\n0  1949   January         112\n1  1949  February         118\n2  1949     March         132\n3  1949     April         129\n4  1949       May         121\n\n\nType of py_flights: &lt;class ‘pandas.core.frame.DataFrame’&gt;\n\n\nCode\n# &lt;R&gt;\n\n# Passing the pandas df to R data.frame\nr_flights &lt;- py$py_flights\nhead(r_flights)\n\n\n  year    month passengers\n1 1949  January        112\n2 1949 February        118\n3 1949    March        132\n4 1949    April        129\n5 1949      May        121\n6 1949     June        135\n\n\nClass of r_flights: data.frame",
+    "text": "Passing DataFrame from Python to R\n\n# &lt;Py&gt;\n\n# Create a pandas df from .csv file\nimport pandas as pd\n\nurl = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv\"\n\npy_flights = pd.read_csv(url)\npy_flights.head()\n\n   year     month  passengers\n0  1949   January         112\n1  1949  February         118\n2  1949     March         132\n3  1949     April         129\n4  1949       May         121\n\n\nType of py_flights: &lt;class ‘pandas.core.frame.DataFrame’&gt;\n\n# &lt;R&gt;\n\n# Passing the pandas df to R data.frame\nr_flights &lt;- py$py_flights\nhead(r_flights)\n\n  year    month passengers\n1 1949  January        112\n2 1949 February        118\n3 1949    March        132\n4 1949    April        129\n5 1949      May        121\n6 1949     June        135\n\n\nClass of r_flights: data.frame",
     "crumbs": [
       "Tutorials",
       "From Python to R and back....!"
@@ -53,172 +53,172 @@
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html",
     "href": "projects/01_basic_mapping_with_OSM.html",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "",
     "text": "The goal of this project is to extract, clean, and visualize the road network of Hod Hasharon using OpenStreetMap data, while demonstrating a basic spatial workflow and basic Python tools like OSMnx, geopandas and matplotlib.\nHod Hasharon is a typical suburban city, with population of over 65,000. Most of the population works outside the city, which creates heavy traffic on the outer axis routes, especially during morning hours.\n\n\nGeoPandas for a spatial analysis.\nOSMnx is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.\n\n\n\nThis basic workflow include:\n\nDownload spatial data from OpenStreetMap using OSMnx\nBasic GeoDataFrame inspection and cleaning\nCRS transformation and why it matters\nSimple spatial analysis (length by road type)\nBasic static and interactive visualization",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#spatial-tools-used-in-this-project",
     "href": "projects/01_basic_mapping_with_OSM.html#spatial-tools-used-in-this-project",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "",
     "text": "GeoPandas for a spatial analysis.\nOSMnx is a Python package to easily download, model, analyze, and visualize street networks and other geospatial features from OpenStreetMap.",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#work-stages",
     "href": "projects/01_basic_mapping_with_OSM.html#work-stages",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "",
     "text": "This basic workflow include:\n\nDownload spatial data from OpenStreetMap using OSMnx\nBasic GeoDataFrame inspection and cleaning\nCRS transformation and why it matters\nSimple spatial analysis (length by road type)\nBasic static and interactive visualization",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#define-the-place-boundaries",
     "href": "projects/01_basic_mapping_with_OSM.html#define-the-place-boundaries",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Define the place / boundaries",
     "text": "Define the place / boundaries\nFirst, we’ll get the city boundaries using the ox.geocode_to_gdf() function. This has 2 main roles:\n\nMake sure that OSM recognizes the place’s name.\nCreate a polygon of the place’s border which we can use later\n\n\n\nCode\ncity_name = \"Hod Hasharon, Israel\"\n\nboundary = ox.geocode_to_gdf(city_name)\nboundary.head()\n\n\n\n\n\n\n\n\n\ngeometry\nbbox_west\nbbox_south\nbbox_east\nbbox_north\nplace_id\nosm_type\nosm_id\nlat\nlon\nclass\ntype\nplace_rank\nimportance\naddresstype\nname\ndisplay_name\n\n\n\n\n0\nPOLYGON ((34.87115 32.13514, 34.87122 32.13287...\n34.871145\n32.128648\n34.925727\n32.171671\n194746259\nway\n90998117\n32.14995\n34.885125\nplace\ntown\n18\n0.535236\ntown\nHod HaSharon\nHod HaSharon, Petah Tikva Subdistrict, Center ...\n\n\n\n\n\n\n\nboundary object type: geopandas.geodataframe.GeoDataFrame\nboundary CRS:\n\n\nCode\n# Confirm CRS:\nboundary.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nboundary Basic plot:\n\n\nCode\n# Basic plot\nboundary.plot()",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#load-the-roads-dataset",
     "href": "projects/01_basic_mapping_with_OSM.html#load-the-roads-dataset",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Load the roads dataset",
     "text": "Load the roads dataset\n\n\n\n\n\n\nNote\n\n\n\nIn this section we’ll load the full dataset and clean the data after loading, using geopandas\n\n\nNow we can load the roads and paths. First we need to define the tags.\ntags is the key:value of the map feature we want to load. full list of the tags can be found here.\nWe’ll use 'road_type': True to retrieve the whole roads, paths and cycle tracks and other recognised routes.\nOSMnx has a few features_from_*() methods to load data, in which we’ll focus on 2 of them.\n\nfeatures_from_place()\nThis method uses the place name we confirmed earlier, it’s simpler method but depends on OSM’s place definitions:\n\n\nCode\n# Defining 'tags' (the value can be a list of specific features)\ntags = {'highway': True}\n\n# Using features_from_place()\ncity_roads = ox.features_from_place(city_name, tags=tags)\n\n\nWe got 2008 features with 85 attributes\n\n\nfeatures_from_polygon()\nIn this method we use the polygon object we created, which gives more control and especially useful with custom boundaries:\n\n\nCode\n# Using features_from_polygon()\ncity_roads_from_polygon = ox.features_from_polygon(boundary.geometry.iloc[0],\n                                           tags=tags)\n\n\n\n\n\n\n\n\nNote\n\n\n\nThe polygon argument is boundary.geometry.iloc[0] which is shapely.geometry.polygon.Polygon type object\n\n\nHere we also got 2008 features with 85 attributes",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#filtering-geometry-types",
     "href": "projects/01_basic_mapping_with_OSM.html#filtering-geometry-types",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Filtering geometry types",
     "text": "Filtering geometry types\nLet’s check the geometry type we got, and filter out all non-LineString features\n\n\nCode\ncity_roads.geometry.geom_type.value_counts()\n\n\nLineString    1776\nPoint          227\nPolygon          5\nName: count, dtype: int64\n\n\n\n\nCode\ncity_roads_linestrings = city_roads[\n    city_roads.geometry.geom_type.isin([\"LineString\", \"MultiLineString\"])]\n\n\n\n\n\n\n\n\nTip\n\n\n\nAlthough there aren’t any MultiLineString geometric types features in this gdf, it’s a good practice to include them.\n\n\nAfter filtering, the gdf contains 1776 features",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#cleaning-columns",
     "href": "projects/01_basic_mapping_with_OSM.html#cleaning-columns",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Cleaning columns",
     "text": "Cleaning columns\nThe necessary columns are:\n\n‘geometry’ - IMPORTANT!\n‘highway’ - The road type according to the OSM’s key:value definition (will be changed to road_type)\n‘name’ - Streets name (if available)\n\n\n\nCode\ncity_roads_linestrings = city_roads_linestrings[['geometry', 'highway', 'name']]\ncity_roads_linestrings.rename({\"highway\": \"road_type\"}, axis=\"columns\", inplace=True) # Rename column\n\n\nThe clean gdf contains 1776 features and 3 attributes",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#reproject-the-crs",
     "href": "projects/01_basic_mapping_with_OSM.html#reproject-the-crs",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Reproject the CRS",
     "text": "Reproject the CRS\nBefore we add the length of the segments, we have to check the gdf’s CRS to see if it has meaningful units of measurement:\n\n\nCode\n# Check gdf CRS \ncity_roads_linestrings.crs\n\n\n&lt;Geographic 2D CRS: EPSG:4326&gt;\nName: WGS 84\nAxis Info [ellipsoidal]:\n- Lat[north]: Geodetic latitude (degree)\n- Lon[east]: Geodetic longitude (degree)\nArea of Use:\n- name: World.\n- bounds: (-180.0, -90.0, 180.0, 90.0)\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\n\n\nCode\ncity_roads_linestrings.geometry.length.head()\n\n\nelement  id      \nway      31661888    0.008288\n         31664220    0.004763\n         31664319    0.001693\n         31664320    0.001673\n         31664581    0.003211\ndtype: float64\n\n\nIn WGS84 (EPSG: 4326) coordinates and measurements are in degrees, which make distance values hard to understand and not very practical on small areas. To make measurements meaningful we need to reproject the spatial dataset to a projected CRS (ex. UTM) where units are in meters.\n\n\n\n\n\n\nTip\n\n\n\nFor a full list of all the available CRSs, check epsg.io site\n\n\n\n\nCode\ncity_roads_UTM = city_roads_linestrings.to_crs(epsg=32636)\n\n\nSo now, if we check the CRS we’ll get:\n\n\nCode\ncity_roads_UTM.crs\n\n\n&lt;Projected CRS: EPSG:32636&gt;\nName: WGS 84 / UTM zone 36N\nAxis Info [cartesian]:\n- E[east]: Easting (metre)\n- N[north]: Northing (metre)\nArea of Use:\n- name: Between 30°E and 36°E, northern hemisphere between equator and 84°N, onshore and offshore. Belarus. Cyprus. Egypt. Ethiopia. Finland. Israel. Jordan. Kenya. Lebanon. Moldova. Norway. Russian Federation. Saudi Arabia. Sudan. Syria. Türkiye (Turkey). Uganda. Ukraine.\n- bounds: (30.0, 0.0, 36.0, 84.0)\nCoordinate Operation:\n- name: UTM zone 36N\n- method: Transverse Mercator\nDatum: World Geodetic System 1984 ensemble\n- Ellipsoid: WGS 84\n- Prime Meridian: Greenwich\n\n\nAnd if we check the length of the first few features, we’ll get:\n\n\nCode\ncity_roads_UTM.geometry.length.head()\n\n\nelement  id      \nway      31661888    781.878730\n         31664220    528.026825\n         31664319    173.824444\n         31664320    168.902683\n         31664581    355.949285\ndtype: float64",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#adding-length-m-attribute",
     "href": "projects/01_basic_mapping_with_OSM.html#adding-length-m-attribute",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Adding ‘length (m)’ attribute",
     "text": "Adding ‘length (m)’ attribute\n\n\nCode\ncity_roads_UTM['length (m)'] = round(city_roads_UTM.geometry.length, 2)\ncity_roads_UTM.head()\n\n\n\n\n\n\n\n\n\n\ngeometry\nroad_type\nname\nlength (m)\n\n\nelement\nid\n\n\n\n\n\n\n\n\nway\n31661888\nLINESTRING (677111.155 3559979.322, 677120.526...\ntertiary\nמשה שרת\n781.88\n\n\n31664220\nLINESTRING (677908.092 3560027.002, 677907.53 ...\ntertiary\nבית העם\n528.03\n\n\n31664319\nLINESTRING (677624.453 3560007.537, 677511.922...\nliving_street\nארלוזורוב\n173.82\n\n\n31664320\nLINESTRING (677638.008 3559750.042, 677511.778...\nliving_street\nרמז\n168.90\n\n\n31664581\nLINESTRING (677334.865 3559994.22, 677332.286 ...\nresidential\nהפרדס\n355.95",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#calculating-the-total-length-of-each-road_type-value",
     "href": "projects/01_basic_mapping_with_OSM.html#calculating-the-total-length-of-each-road_type-value",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Calculating the total length of each ‘road_type’ value",
     "text": "Calculating the total length of each ‘road_type’ value\n\n\nCode\nroads_types = pd.DataFrame(city_roads_UTM.groupby('road_type')['length (m)'].sum())\nroads_types['percent of total length'] = round((roads_types['length (m)'] / sum(roads_types['length (m)']) * 100), 2)\nroads_types.sort_values(by='length (m)', ascending=False)\n\n\n\n\n\n\n\n\n\nlength (m)\npercent of total length\n\n\nroad_type\n\n\n\n\n\n\nresidential\n92854.33\n39.59\n\n\npath\n26805.91\n11.43\n\n\ntertiary\n23675.85\n10.10\n\n\ntrack\n20928.70\n8.92\n\n\nfootway\n20515.27\n8.75\n\n\nservice\n17467.23\n7.45\n\n\ncycleway\n10840.30\n4.62\n\n\nprimary\n9515.90\n4.06\n\n\nliving_street\n6876.08\n2.93\n\n\nsecondary\n3902.65\n1.66\n\n\nprimary_link\n453.12\n0.19\n\n\nmotorway_link\n314.84\n0.13\n\n\nsteps\n204.12\n0.09\n\n\nsecondary_link\n128.78\n0.05\n\n\npedestrian\n29.67\n0.01",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html#advanced-action-items",
     "href": "projects/01_basic_mapping_with_OSM.html#advanced-action-items",
-    "title": "Mapping a City’s Road Network with OpenStreetMap",
+    "title": "Mapping a City’s Road Network",
     "section": "Advanced action-items",
     "text": "Advanced action-items\nHere’s some advanced action-items which can be made on this project:\n\nDivide the road types into 3 bins - connectivity roads, local roads, walking pathways and bicycle routes\nCompare with other cities\nImprove visualization",
     "crumbs": [
       "Projects",
-      "Mapping a City's Road Network with OpenStreetMap"
+      "Mapping a City's Road Network"
     ]
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "Ronen Weinberg",
+    "title": "About this Site",
     "section": "",
     "text": "My name is Ronen Weinberg.\nI’ve been fascinated by maps for as long as I can remember. Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.",
     "crumbs": [
-      "Ronen Weinberg"
+      "About this Site"
     ]
   },
   {
     "objectID": "about.html#background",
     "href": "about.html#background",
-    "title": "Ronen Weinberg",
+    "title": "About this Site",
     "section": "Background",
     "text": "Background\nI am a 30-year military veteran, where I worked as an imagery analyst and was also involved in training. My academic background includes a B.A. in Political Science and an M.A. in Geography.",
     "crumbs": [
-      "Ronen Weinberg"
+      "About this Site"
     ]
   },
   {
     "objectID": "about.html#why-spatial-analysis",
     "href": "about.html#why-spatial-analysis",
-    "title": "Ronen Weinberg",
+    "title": "About this Site",
     "section": "Why spatial analysis",
     "text": "Why spatial analysis\nFor me, spatial analysis sits at a unique intersection:\n\nHuman and environmental behaviour\nTechnical and analytical work\nVisual thinking, design, and a bit of artistry\n\nIt combines structure and creativity in a way that makes the process as interesting as the results.",
     "crumbs": [
-      "Ronen Weinberg"
+      "About this Site"
     ]
   },
   {
     "objectID": "about.html#about-this-site",
     "href": "about.html#about-this-site",
-    "title": "Ronen Weinberg",
+    "title": "About this Site",
     "section": "About this site",
     "text": "About this site\nThis site is a personal project — a space where I focus on the technical side of spatial analysis by building and documenting real examples.\nEverything here is based on open-source datasets (e.g OSM) and free tools (e.g Python, R and DuckDB). The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
     "crumbs": [
-      "Ronen Weinberg"
+      "About this Site"
     ]
   },
   {
     "objectID": "about.html#a-personal-note",
     "href": "about.html#a-personal-note",
-    "title": "Ronen Weinberg",
+    "title": "About this Site",
     "section": "A personal note",
     "text": "A personal note\nThis is my “corner of the world” — a place driven by curiosity and personal interest. It’s first and foremost a hobby.\nThat said, I hope that some of what’s here can also be useful to others who are learning, exploring, or just enjoy maps as much as I do.",
     "crumbs": [
-      "Ronen Weinberg"
+      "About this Site"
     ]
   },
   {
@@ -247,7 +247,7 @@
     "href": "projects/02_parks_comparison.html",
     "title": "Cities’ Public Parks Comparison",
     "section": "",
-    "text": "In this project, I compare the availability, size and accessibility of public parks across three similar cities in central Israel, located near each other. This type of analysis can support urban planning and quality-of-life assessments.\nThe cities are:\n\nHod Hasharon (pop. ~63,000)\nKfar Sava (pop. ~101,000)\nRaanana (pop. ~75,000)\n\nThe cities are considered as “dormitory cities”, located in the southern Sharon region in Israel and have a high socio-economic level. All three cities have central parks as well as smaller parks spread throughout residential areas.\nThe comparison includes the number of parks, their total area, mean area, total area per 1,000 residents, and the relative coverage of 500-meters buffer zones.\n\n\n\nOpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.\n\n\n\n\n\n\nLooping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
+    "text": "Hod Hasharon Ecological Park",
     "crumbs": [
       "Projects",
       "Cities' Public Parks Comparison"
@@ -257,8 +257,8 @@
     "objectID": "projects/02_parks_comparison.html#spatial-data",
     "href": "projects/02_parks_comparison.html#spatial-data",
     "title": "Cities’ Public Parks Comparison",
-    "section": "",
-    "text": "OpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.",
+    "section": "Spatial Data",
+    "text": "Spatial Data\n\nOpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.",
     "crumbs": [
       "Projects",
       "Cities' Public Parks Comparison"
@@ -268,8 +268,8 @@
     "objectID": "projects/02_parks_comparison.html#workflow",
     "href": "projects/02_parks_comparison.html#workflow",
     "title": "Cities’ Public Parks Comparison",
-    "section": "",
-    "text": "Looping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
+    "section": "Workflow",
+    "text": "Workflow\n\nLooping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
     "crumbs": [
       "Projects",
       "Cities' Public Parks Comparison"

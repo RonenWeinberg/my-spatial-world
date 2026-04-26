@@ -3,6 +3,8 @@ title: Cities' Public Parks Comparison
 categories: [Analysis, Python, OSM]
 ---
 
+![Hod Hasharon Ecological Park](https://i.ytimg.com/vi/7cJac1Pg9bo/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLCx3Ydf6jxb4NzkP5TV6-kSsg8YBA)
+
 # Overview
 
 In this project, I compare the availability, size and accessibility of public parks across three similar cities in central Israel, located near each other. This type of analysis can support urban planning and quality-of-life assessments.

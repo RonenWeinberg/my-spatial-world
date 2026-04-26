@@ -1,5 +1,5 @@
 ---
-title: "Mapping a City's Road Network with OpenStreetMap"
+title: "Mapping a City's Road Network"
 categories: [Analysis, Python, OSM, Basic]
 ---
 
