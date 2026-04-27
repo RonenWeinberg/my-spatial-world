@@ -6,7 +6,6 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-08-04">
 
 <title>overture_landuse – My Spatial World</title>
 <style>
@@ -197,6 +196,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
  <span class="menu-text">From Python to R and back….!</span></a>
   </div>
 </li>
+          <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../tutorials/02_duckdb_with_otm.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Using duckdb For Overture Maps</span></a>
+  </div>
+</li>
       </ul>
   </li>
         <li class="sidebar-item">
@@ -228,7 +233,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">08/04/2026</p>
+      <p class="date">26/04/2026</p>
     </div>
   </div>
   
@@ -294,7 +299,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 │ getvariable('latest_release') │
 │            varchar            │
 ├───────────────────────────────┤
-│ 2026-03-18.0                  │
+│ 2026-04-15.0                  │
 └───────────────────────────────┘
 </code></pre>
 </div>
@@ -302,14 +307,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="e76e6ab2" class="cell" data-execution_count="7">
 <details class="code-fold">
 <summary>Code</summary>
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>con.sql(<span class="st">"SELECT * FROM duckdb_variables();"</span>).show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># variables list</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>con.sql(<span class="st">"SELECT * FROM duckdb_variables();"</span>).show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
 <div class="cell-output cell-output-stdout">
 <pre><code>┌────────────────┬──────────────┬─────────┐
 │      name      │    value     │  type   │
 │    varchar     │   varchar    │ varchar │
 ├────────────────┼──────────────┼─────────┤
-│ latest_release │ 2026-03-18.0 │ VARCHAR │
+│ latest_release │ 2026-04-15.0 │ VARCHAR │
 └────────────────┴──────────────┴─────────┘
 </code></pre>
 </div>
@@ -441,7 +448,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 <p>Boundary,Decimal Degrees Minimum Latitude (South),32.1311∘ Maximum Latitude (North),32.1834∘ Minimum Longitude (West),34.8617∘ Maximum Longitude (East),34.9351∘</p>
-<div id="a7268fa2" class="cell" data-execution_count="54">
+<div id="a7268fa2" class="cell" data-execution_count="21">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>theme <span class="op">=</span> <span class="st">"divisions"</span></span>
@@ -449,7 +456,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Spatial query, geometery in binary format</span></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rel <span class="op">=</span> con.sql(<span class="ss">f"""</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="ss">    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)</span></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a><span class="ss">    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, admin_level)</span></span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a><span class="ss">    FROM read_parquet(</span></span>
 <span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="ss">    format('s3://overturemaps-us-west-2/release/</span><span class="ch">{{}}</span><span class="ss">/theme=</span><span class="sc">{</span>theme<span class="sc">}</span><span class="ss">/type=</span><span class="sc">{</span>ot_type<span class="sc">}</span><span class="ss">/*', getvariable('latest_release')),</span></span>
 <span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="ss">    filename=true, hive_partitioning=1)</span></span>
@@ -461,47 +468,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>cities <span class="op">=</span> gpd.GeoDataFrame.from_arrow(rel)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </details>
-<div class="cell-output cell-output-error">
-<div class="ansi-escaped-output">
-<pre><span class="ansi-red-fg ansi-bold">---------------------------------------------------------------------------</span>
-
-<span class="ansi-red-fg ansi-bold">BinderException</span>                           Traceback (most recent call last)
-
-Cell <span class="ansi-green-fg ansi-bold">In[54], line 5</span>
-
-<span class="ansi-green-fg">      2</span> ot_type <span style="color:rgb(98,98,98)">=</span> <span style="color:rgb(175,0,0)">"</span><span style="color:rgb(175,0,0)">division_area</span><span style="color:rgb(175,0,0)">"</span>
-
-<span class="ansi-green-fg">      4</span> <span style="font-style:italic;color:rgb(95,135,135)"># 2. Spatial query, geometery in binary format</span>
-
-<span class="ansi-green-fg ansi-bold">----&gt; 5</span> rel <span style="color:rgb(98,98,98)">=</span> <span class="ansi-yellow-bg">con</span><span style="color:rgb(98,98,98)" class="ansi-yellow-bg">.</span><span class="ansi-yellow-bg">sql</span><span class="ansi-yellow-bg">(</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">f</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"""</span>
-
-<span class="ansi-green-fg">      6</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)</span>
-
-<span class="ansi-green-fg">      7</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">    FROM read_parquet(</span>
-
-<span class="ansi-green-fg">      8</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">    format(</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">s3://overturemaps-us-west-2/release/</span><span style="font-weight:bold;color:rgb(175,95,0)" class="ansi-yellow-bg">{{</span><span style="font-weight:bold;color:rgb(175,95,0)" class="ansi-yellow-bg">}}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">/theme=</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">theme</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">/type=</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">{</span><span class="ansi-yellow-bg">ot_type</span><span style="font-weight:bold;color:rgb(175,95,135)" class="ansi-yellow-bg">}</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">/*</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">, getvariable(</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">latest_release</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">)),</span>
-
-<span class="ansi-green-fg">      9</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">    filename=true, hive_partitioning=1)</span>
-
-<span class="ansi-green-fg">     10</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">    WHERE</span>
-
-<span class="ansi-green-fg">     11</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">        class LIKE </span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">town</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg">'</span><span style="color:rgb(175,0,0)" class="ansi-yellow-bg"> AND</span>
-
-<span class="ansi-green-fg">     12</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND</span>
-
-<span class="ansi-green-fg">     13</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">        bbox.ymin BETWEEN 32.1311 AND 32.1834;</span>
-
-<span class="ansi-green-fg">     14</span> <span style="color:rgb(175,0,0)" class="ansi-yellow-bg">"""</span><span class="ansi-yellow-bg">)</span><span style="color:rgb(98,98,98)">.</span>arrow()
-
-<span class="ansi-green-fg">     16</span> cities <span style="color:rgb(98,98,98)">=</span> gpd<span style="color:rgb(98,98,98)">.</span>GeoDataFrame<span style="color:rgb(98,98,98)">.</span>from_arrow(rel)
-
-
-
-<span class="ansi-red-fg ansi-bold">BinderException</span>: Binder Error: Column "capital_division_ids" in EXCLUDE list not found in FROM clause</pre>
 </div>
-</div>
-</div>
-<div id="fe703d12" class="cell" data-execution_count="53">
+<div id="fe703d12" class="cell">
 <details class="code-fold">
 <summary>Code</summary>
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>cities</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>

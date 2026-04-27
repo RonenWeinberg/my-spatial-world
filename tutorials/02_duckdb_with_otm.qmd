@@ -1,0 +1,150 @@
+---
+title: "Using duckdb For Overture Maps"
+code-fold: false
+code-overflow: scroll
+code-annotations: hover
+---
+# Overview
+
+[Overture Maps](https://overturemaps.org/) is a free and open map data which distribute its data as GeoParquet files. Those files are hosted on Amazon S3 and Microsoft Azure Blob Storage.
+
+Unlike Open Street Maps, which based on updates from the community, Overture Maps based on OSM, governmental and cooperates data with algorithmically AI updates. This difference is significance in the features' meta-data which is much more vast in OSM (although not always accurate) while Overture Maps uses structured schema which gives it much more stability.
+
+There are few ways to access the data:
+
+* [Overture Maps Explorer](https://explore.overturemaps.org/) where you can browse, search, inspect and download the data.
+
+*  Overture's Python client which provide command-line interface and a Python library to download the data
+
+* Duckdb - an analytical tool which allow you to query and download remote data files with SQL syntax.
+
+In this part I'll focus on duckdb's Python's library as a quarrying tool.
+
+# Setting
+
+```{python}
+# Loading libraries
+import geopandas as gpd
+import duckdb
+```
+
+```{python}
+# Create an in-memory database
+con = duckdb.connect()
+```
+
+```{python}
+#| output: false
+
+# Load duckdb extensions
+
+# Geospatial extension that adds support 
+# for working with spatial data and functions
+con.sql("INSTALL spatial; LOAD spatial") 
+
+# Adds support for reading and writing files 
+# over a HTTP(S) connection 
+con.sql("INSTALL httpfs; LOAD httpfs")
+```
+
+```{python}
+# Configure s3 access
+con.sql("SET s3_region = 'us-west-2';")
+```
+
+```{python}
+# Find the latest Overture Maps release
+con.sql("""
+    SET VARIABLE latest_release = (
+        SELECT latest FROM 'https://stac.overturemaps.org/catalog.json');
+""")
+
+# Show the latest release
+con.sql("SELECT getvariable ('latest_release');").show()
+```
+
+# Querying
+
+## Address Structure
+
+First we'll understand the structure of Overture Maps' address on 's3':
+
+`s3://overturemaps-us-west-2/release/[latest_release]/theme=[theme]/type=[type]/*`
+
+* `[latest_release]`: The latest release of the dataset, as been defined by the SQL variable above (Note: Update once a month)
+
+* `[theme]` & `[type]`: The theme and type of the data need to be query, according to the Overture Maps' [schema](https://docs.overturemaps.org/schema/)
+
+## The Query
+
+```{python}
+
+# 1. Define theme and type of data (Based on OTM schema)
+theme = "base"
+ot_type = "land_use"
+# (Note: don't use 'type' as variable name 
+# to prevent confusion with the 'type' function)
+
+# 2. Spatial query
+rel = con.sql(f"""
+    SELECT 
+        id,
+        class,
+        subtype,
+        geometry
+    FROM 
+        read_parquet(                                                                              
+            format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*',  
+                    getvariable('latest_release')),
+            filename = true,
+            hive_partitioning = 1)
+    WHERE
+        -- Step 1: Use the bbox as first "Coarse" filter
+        bbox.xmin <= 34.9351 AND bbox.xmax >= 34.8617 AND
+        bbox.ymin <= 32.1834 AND bbox.ymax >= 32.1311 AND
+
+        -- Step 2: Use ST_Intersects as second filter
+        -- for rows that pass Step 1 (The "Fine" filter)
+        ST_Intersects(
+            geometry,
+            ST_MakeEnvelope(34.8617, 32.1311, 34.9351, 32.1834));
+""")
+```
+
+# Converting to GeoDataFrame
+
+The `geometry` format in duckdb is a binary, which GeoPandas do not recognize. This means that the data should be converted.
+
+## Using 'Arrow'
+
+The easiest way is using 'Arrow' as a converter:
+
+```{python}
+arrow_df = rel.arrow()
+gdf_from_arrow = gpd.GeoDataFrame.from_arrow(arrow_df)
+
+gdf_from_arrow.head()
+```
+
+## Using DataFrame
+
+```{python}
+# Convert the GEOMETRY type to WKB (standard BLOB)
+pd_df = con.sql("""
+    SELECT * EXCLUDE (geometry),
+        ST_AsWKB(geometry) as geom_binary
+    FROM rel;
+""").df()
+
+# Cast the BLOB the python bytes
+pd_df['geom_binary'] = pd_df['geom_binary'].apply(bytes)
+
+# Load into GeoDataFrame
+gdf_from_df = gpd.GeoDataFrame(
+    pd_df.drop(columns=['geom_binary']),
+    geometry=gpd.GeoSeries.from_wkb(pd_df['geom_binary']),
+    crs="EPSG:4326"
+)
+
+gdf_from_df.head()
+```

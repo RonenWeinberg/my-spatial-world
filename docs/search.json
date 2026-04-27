@@ -1,54 +1,272 @@
 [
   {
-    "objectID": "tutorials/01_py2r.html",
-    "href": "tutorials/01_py2r.html",
-    "title": "From Python to R and back….!",
+    "objectID": "tutorials/02_duckdb_with_otm.html",
+    "href": "tutorials/02_duckdb_with_otm.html",
+    "title": "Using duckdb For Overture Maps",
     "section": "",
-    "text": "Before I start, I wanted to test the combination of Python and R in the same .qmd file.\nApparently, it’s very simple — just add library(reticulate) in an R cell and you’re all set.\nTo pass objects (e.g., variables, data frames, and so on…) between the two languages, you need to reference the variable as r.[variable] in Python or py$[variable] in R.\nSo where do the problems start? When you try to insert Python inline code inside markdown text.\nIn short, even though your .qmd document contains both R and Python executable code cells, it can execute only R inline code.\\ To bypass this, there are a bunch of reticulate:: functions that can help. The two main ones are:\n\nreticulate::py_str() — roughly equivalent to print(str(...))\nreticulate::py_eval() — executes a Python expression that returns numbers, strings, lists, or dicts (can be problematic with Python objects like type, classes, or modules)\n\nExample: {r} reticulate::py_eval(\"str(type(x))\") — returns the type of variable x as a string",
+    "text": "Overture Maps is a free and open map data which distribute its data as GeoParquet files. Those files are hosted on Amazon S3 and Microsoft Azure Blob Storage.\nUnlike Open Street Maps, which based on updates from the community, Overture Maps based on OSM, governmental and cooperates data with algorithmically AI updates. This difference is significance in the features’ meta-data which is much more vast in OSM (although not always accurate) while Overture Maps uses structured schema which gives it much more stability.\nThere are few ways to access the data:\n\nOverture Maps Explorer where you can browse, search, inspect and download the data.\nOverture’s Python client which provide command-line interface and a Python library to download the data\nDuckdb - an analytical tool which allow you to query and download remote data files with SQL syntax.\n\nIn this part I’ll focus on duckdb’s Python’s library as a quarrying tool.",
     "crumbs": [
       "Tutorials",
-      "From Python to R and back....!"
+      "Using duckdb For Overture Maps"
     ]
   },
   {
-    "objectID": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
-    "href": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
-    "title": "From Python to R and back….!",
-    "section": "Passing variable from Python to R",
-    "text": "Passing variable from Python to R\n\n# &lt;Py&gt;\n\n# Create Python variable py_x\npy_x = 10\nprint(py_x)\n\n10\n\n\nType of py_x: &lt;class ‘int’&gt;\n\n# &lt;R&gt;\n\n# Passing Python variable py_x to R \nr_x &lt;- py$py_x\nprint(r_x)\n\n[1] 10\n\n\nClass of r_x: integer",
+    "objectID": "tutorials/02_duckdb_with_otm.html#address-structure",
+    "href": "tutorials/02_duckdb_with_otm.html#address-structure",
+    "title": "Using duckdb For Overture Maps",
+    "section": "Address Structure",
+    "text": "Address Structure\nFirst we’ll understand the structure of Overture Maps’ address on ‘s3’:\ns3://overturemaps-us-west-2/release/[latest_release]/theme=[theme]/type=[type]/*\n\n[latest_release]: The latest release of the dataset, as been defined by the SQL variable above (Note: Update once a month)\n[theme] & [type]: The theme and type of the data need to be query, according to the Overture Maps’ schema",
     "crumbs": [
       "Tutorials",
-      "From Python to R and back....!"
+      "Using duckdb For Overture Maps"
     ]
   },
   {
-    "objectID": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
-    "href": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
-    "title": "From Python to R and back….!",
-    "section": "Passing variable from R to Python",
-    "text": "Passing variable from R to Python\n\n# &lt;R&gt;\n\n# Create R variable r_y \nr_y &lt;- 20\nprint(r_y)\n\n[1] 20\n\n\nClass of r_y: numeric\n\n# &lt;Py&gt;\n\n# Passing the R variable r_y to Python \npy_y = r.r_y\nprint(py_y)\n\n20.0\n\n\nType of py_y: &lt;class ‘float’&gt;",
+    "objectID": "tutorials/02_duckdb_with_otm.html#the-query",
+    "href": "tutorials/02_duckdb_with_otm.html#the-query",
+    "title": "Using duckdb For Overture Maps",
+    "section": "The Query",
+    "text": "The Query\n\n# 1. Define theme and type of data (Based on OTM schema)\ntheme = \"base\"\not_type = \"land_use\"\n# (Note: don't use 'type' as variable name \n# to prevent confusion with the 'type' function)\n\n# 2. Spatial query\nrel = con.sql(f\"\"\"\n    SELECT \n        id,\n        class,\n        subtype,\n        geometry\n    FROM \n        read_parquet(                                                                              \n            format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*',  \n                    getvariable('latest_release')),\n            filename = true,\n            hive_partitioning = 1)\n    WHERE\n        -- Step 1: Use the bbox as first \"Coarse\" filter\n        bbox.xmin &lt;= 34.9351 AND bbox.xmax &gt;= 34.8617 AND\n        bbox.ymin &lt;= 32.1834 AND bbox.ymax &gt;= 32.1311 AND\n\n        -- Step 2: Use ST_Intersects as second filter\n        -- for rows that pass Step 1 (The \"Fine\" filter)\n        ST_Intersects(\n            geometry,\n            ST_MakeEnvelope(34.8617, 32.1311, 34.9351, 32.1834));\n\"\"\")",
     "crumbs": [
       "Tutorials",
-      "From Python to R and back....!"
+      "Using duckdb For Overture Maps"
     ]
   },
   {
-    "objectID": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
-    "href": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
-    "title": "From Python to R and back….!",
-    "section": "Passing DataFrame from Python to R",
-    "text": "Passing DataFrame from Python to R\n\n# &lt;Py&gt;\n\n# Create a pandas df from .csv file\nimport pandas as pd\n\nurl = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv\"\n\npy_flights = pd.read_csv(url)\npy_flights.head()\n\n   year     month  passengers\n0  1949   January         112\n1  1949  February         118\n2  1949     March         132\n3  1949     April         129\n4  1949       May         121\n\n\nType of py_flights: &lt;class ‘pandas.core.frame.DataFrame’&gt;\n\n# &lt;R&gt;\n\n# Passing the pandas df to R data.frame\nr_flights &lt;- py$py_flights\nhead(r_flights)\n\n  year    month passengers\n1 1949  January        112\n2 1949 February        118\n3 1949    March        132\n4 1949    April        129\n5 1949      May        121\n6 1949     June        135\n\n\nClass of r_flights: data.frame",
+    "objectID": "tutorials/02_duckdb_with_otm.html#using-arrow",
+    "href": "tutorials/02_duckdb_with_otm.html#using-arrow",
+    "title": "Using duckdb For Overture Maps",
+    "section": "Using ‘Arrow’",
+    "text": "Using ‘Arrow’\nThe easiest way is using ‘Arrow’ as a converter:\n\narrow_df = rel.arrow()\ngdf_from_arrow = gpd.GeoDataFrame.from_arrow(arrow_df)\n\ngdf_from_arrow.head()\n\n\n\n\n\n\n\n\n\n\n\nid\nclass\nsubtype\ngeometry\n\n\n\n\n0\nf379d527-213f-3175-ae96-176e94da7237\nresidential\nresidential\nMULTIPOLYGON (((34.81397 32.12596, 34.81393 32...\n\n\n1\nefd87006-b74c-3a4d-a8e0-b85b5f5f7cd0\nresidential\nresidential\nPOLYGON ((34.7956 32.14529, 34.80244 32.14402,...\n\n\n2\n164509da-57f1-3031-8a1c-c70f7ed9335c\nresidential\nresidential\nPOLYGON ((34.93882 32.17465, 34.93831 32.17539...\n\n\n3\nfb472082-4c23-33a8-be91-7815769fa5ad\nfarmland\nagriculture\nPOLYGON ((34.93302 32.17088, 34.93498 32.16903...\n\n\n4\n4ee1058c-7498-38ae-8916-df2405224bff\nfarmland\nagriculture\nPOLYGON ((34.93771 32.17598, 34.93755 32.17603...",
     "crumbs": [
       "Tutorials",
-      "From Python to R and back....!"
+      "Using duckdb For Overture Maps"
     ]
   },
   {
-    "objectID": "temp_files/overture_landuse.html",
-    "href": "temp_files/overture_landuse.html",
-    "title": "My Spatial World",
+    "objectID": "tutorials/02_duckdb_with_otm.html#using-dataframe",
+    "href": "tutorials/02_duckdb_with_otm.html#using-dataframe",
+    "title": "Using duckdb For Overture Maps",
+    "section": "Using DataFrame",
+    "text": "Using DataFrame\n\n# Convert the GEOMETRY type to WKB (standard BLOB)\npd_df = con.sql(\"\"\"\n    SELECT * EXCLUDE (geometry),\n        ST_AsWKB(geometry) as geom_binary\n    FROM rel;\n\"\"\").df()\n\n# Cast the BLOB the python bytes\npd_df['geom_binary'] = pd_df['geom_binary'].apply(bytes)\n\n# Load into GeoDataFrame\ngdf_from_df = gpd.GeoDataFrame(\n    pd_df.drop(columns=['geom_binary']),\n    geometry=gpd.GeoSeries.from_wkb(pd_df['geom_binary']),\n    crs=\"EPSG:4326\"\n)\n\ngdf_from_df.head()\n\n\n\n\n\n\n\n\nid\nclass\nsubtype\ngeometry\n\n\n\n\n0\nf379d527-213f-3175-ae96-176e94da7237\nresidential\nresidential\nMULTIPOLYGON (((34.81397 32.12596, 34.81393 32...\n\n\n1\nefd87006-b74c-3a4d-a8e0-b85b5f5f7cd0\nresidential\nresidential\nPOLYGON ((34.7956 32.14529, 34.80244 32.14402,...\n\n\n2\n164509da-57f1-3031-8a1c-c70f7ed9335c\nresidential\nresidential\nPOLYGON ((34.93882 32.17465, 34.93831 32.17539...\n\n\n3\nfb472082-4c23-33a8-be91-7815769fa5ad\nfarmland\nagriculture\nPOLYGON ((34.93302 32.17088, 34.93498 32.16903...\n\n\n4\n4ee1058c-7498-38ae-8916-df2405224bff\nfarmland\nagriculture\nPOLYGON ((34.93771 32.17598, 34.93755 32.17603...",
+    "crumbs": [
+      "Tutorials",
+      "Using duckdb For Overture Maps"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html",
+    "href": "tutorials/00_create_folder.html",
+    "title": "Project Setup Guide",
     "section": "",
-    "text": "Code\nimport geopandas as gpd\nimport duckdb\nimport pandas as pd\n\n\n\n\nCode\n# Connect to in-memory database\ncon = duckdb.connect()\n\n\n\n\nCode\n# Load extensions\ncon.sql(\"INSTALL spatial; LOAD spatial\")\ncon.sql(\"INSTALL httpfs; LOAD httpfs\")\n\n\n\n\nCode\n# Configure s3 access\ncon.sql(\"SET s3_region = 'us-west-2';\")\n\n\n\n\nCode\n# Find the latest release\n\ncon.sql(\"\"\"\n    SET VARIABLE latest_release = (\n        SELECT latest FROM 'https://stac.overturemaps.org/catalog.json'\n    );\n\"\"\")\n\n\n\n\nCode\n# Show the latest release\n\ncon.sql(\"SELECT getvariable('latest_release');\").show()\n\n\n┌───────────────────────────────┐\n│ getvariable('latest_release') │\n│            varchar            │\n├───────────────────────────────┤\n│ 2026-03-18.0                  │\n└───────────────────────────────┘\n\n\n\n\n\nCode\ncon.sql(\"SELECT * FROM duckdb_variables();\").show()\n\n\n┌────────────────┬──────────────┬─────────┐\n│      name      │    value     │  type   │\n│    varchar     │   varchar    │ varchar │\n├────────────────┼──────────────┼─────────┤\n│ latest_release │ 2026-03-18.0 │ VARCHAR │\n└────────────────┴──────────────┴─────────┘\n\n\n\n\n\nCode\n# 1. Define theme and type of data\ntheme = \"base\"\not_type = \"land_use\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKB(geometry) as geom_binary -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df with geom_binary to gdf\n\nrel['geom_binary'] = rel['geom_binary'].apply(bytes)\n\nhh_landuse = gpd.GeoDataFrame(\n    rel.drop(columns=['geom_binary']),\n    geometry=gpd.GeoSeries.from_wkb(rel['geom_binary']),\n    crs=\"EPSG:4326\"\n)\n\n\n\n\nCode\ntype(hh_landuse)\n\n\ngeopandas.geodataframe.GeoDataFrame\n\n\n\n\nCode\n# Spatial query with un-changed geometry - JSON format\n# IMPORTANT: This query have the best! filtering\n\nrel2 = con.sql(\"\"\"\n    SELECT\n        id,\n        class,\n        subtype,\n        geometry\n    FROM read_parquet(\n        's3://overturemaps-us-west-2/release/2026-03-18.0/theme=base/type=land_use/*',\n        filename=true,\n        hive_partitioning=1\n    )\n    WHERE \n    -- Step 1: Use the bbox for lightning-fast pruning (The \"Coarse\" filter)\n    bbox.xmin &lt;= 34.9351 AND bbox.xmax &gt;= 34.8617 AND\n    bbox.ymin &lt;= 32.1834 AND bbox.ymax &gt;= 32.1311\n    -- Step 2: Only run the expensive math on the few rows that pass Step 1 (The \"Fine\" filter)\n    AND ST_Intersects(geometry, ST_MakeEnvelope(34.8617, 32.1311, 34.9351, 32.1834));\n\"\"\")\n\n\n\n\nCode\n# Convert the duckdb.query into gdf with 'arrow'\n\narrow_table = rel2.arrow()\n\ngdf_landuse = gpd.GeoDataFrame.from_arrow(arrow_table)\n\n\n\n\nCode\n#  Spatial query, geometery in WKT format\n\nrel3 = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKT(geometry) as geom_text -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df (geom_text) to gdf\n\ngdf_landuse_3 = gpd.GeoDataFrame(\n    rel3, \n    geometry=gpd.GeoSeries.from_wkt(rel3['geom_text'].astype(str)),\n    crs = \"EPSG:4326\")\n\n\n\n\nCode\nimport contextily as cx\nax = gdf_landuse.plot(alpha=0.5)\ncx.add_basemap(ax, crs=gdf_landuse.crs, source=cx.providers.CartoDB.Positron)\n\n\n\n\n\n\n\n\n\nBoundary,Decimal Degrees Minimum Latitude (South),32.1311∘ Maximum Latitude (North),32.1834∘ Minimum Longitude (West),34.8617∘ Maximum Longitude (East),34.9351∘\n\n\nCode\ntheme = \"divisions\"\not_type = \"division_area\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        class LIKE 'town' AND\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").arrow()\n\ncities = gpd.GeoDataFrame.from_arrow(rel)\n\n\n\n---------------------------------------------------------------------------\n\nBinderException                           Traceback (most recent call last)\n\nCell In[54], line 5\n\n      2 ot_type = \"division_area\"\n\n      4 # 2. Spatial query, geometery in binary format\n\n----&gt; 5 rel = con.sql(f\"\"\"\n\n      6     SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, capital_division_ids,capital_of_divisions, cartography, admin_level,  parent_division_id, norms, hierarchies, perspectives)\n\n      7     FROM read_parquet(\n\n      8     format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n\n      9     filename=true, hive_partitioning=1)\n\n     10     WHERE\n\n     11         class LIKE 'town' AND\n\n     12         bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n\n     13         bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\n     14 \"\"\").arrow()\n\n     16 cities = gpd.GeoDataFrame.from_arrow(rel)\n\n\n\nBinderException: Binder Error: Column \"capital_division_ids\" in EXCLUDE list not found in FROM clause\n\n\n\n\n\nCode\ncities\n\n\n\n\n\n\n\n\n\ngeometry\nsubtype\nclass\nnames\nwikidata\nlocal_type\npopulation\n\n\n\n\n0\nPOINT (34.89304 32.1562)\nlocality\ntown\n{'primary': 'הוד השרון', 'common': [('ar', 'هو...\nQ152379\n[(en, town)]\n64120\n\n\n1\nPOINT (34.90746 32.17735)\nlocality\ntown\n{'primary': 'כפר סבא', 'common': [('ar', 'كفار...\nQ152436\n[(en, town)]\n109091"
+    "text": "My main goal with this project is to create a blog / web site about spatial analysis, with two main focuses: analysis project where I analyze a specific issue, and tutorial topics where I explain a specific issue (mostly for my future self!).\nI will be using Python, R and SQL with duckdb, utilizing Positron with Quarto\nInstead of trying to build the whole website at once, I’m using a “staged approach”:\n\nCreate some standalone .qmd files in organized subfolders.\nOnce initial content is ready, implement a Quarto Website structure to glue them together.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#initialize-the-environment",
+    "href": "tutorials/00_create_folder.html#initialize-the-environment",
+    "title": "Project Setup Guide",
+    "section": "1. Initialize the Environment",
+    "text": "1. Initialize the Environment\nI started by creating an R project folder in Positron with renv for reproducible R dependencies and Git-ready version control. Next, I added a Python environment using UV: {pwsh} uv init",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#core-packages",
+    "href": "tutorials/00_create_folder.html#core-packages",
+    "title": "Project Setup Guide",
+    "section": "2. Core Packages",
+    "text": "2. Core Packages\nI installed the primary spatial and data science packages for each language:\nPython (uv add):\n\ngeopandas, rasterio (Vector/Raster analysis)\nduckdb (SQL)\nmatplotlib (Visualization)\nfolium, leafmap (Interactive Visualization)\njupyter (Engine support)\n\nR (install.packages):\n\ntidyverse (Data Science packages collection)\nsf (Vector analysis)\nterra (Raster analysis)\nreticulate (The bridge between R and Python)\n\n\n\n\n\n\n\nNote\n\n\n\nI am using reticulate for the integration between R and Python environments in the same *.qmd file.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#the-environment-bridge",
+    "href": "tutorials/00_create_folder.html#the-environment-bridge",
+    "title": "Project Setup Guide",
+    "section": "3. The environment Bridge",
+    "text": "3. The environment Bridge\nThe biggest challenge was ensuring reticulate could find the uv environment when rendering files inside subfolders.\nFor local work on Positron, I use a .Renviron file in the project root, which is Git-ignored:\n# .Renviron (Local only!)\nRETICULATE_PYTHON = \"../.venv/Scripts/python.exe\"\n\n\n\n\n\n\nNote\n\n\n\nIn this manner, the .qmd files need to be inside a one-level sub-folder and not directly in the project root. For more flexibility, a full path should be provided",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#python-environment-setting-uv",
+    "href": "tutorials/00_create_folder.html#python-environment-setting-uv",
+    "title": "Project Setup Guide",
+    "section": "4. Python Environment Setting (‘uv’)",
+    "text": "4. Python Environment Setting (‘uv’)\nAnother challenge I was encountered in Positron, was to make sure that while Quarto uses Python, it uses to the local ‘uv’ environment (.venv), and not the base Python (without the necessary libraries). This problem is unique to ‘uv’ environment which isn’t activated manually. To solve this I used this Terminal command:\nPowerShell\n[...\\spatial_project]\n &gt;  setx QUARTO_PYTHON \".venv\\Scripts\\python.exe\"",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#folder-structure",
+    "href": "tutorials/00_create_folder.html#folder-structure",
+    "title": "Project Setup Guide",
+    "section": "5. Folder Structure",
+    "text": "5. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready!",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
+    "href": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
+    "title": "Project Setup Guide",
+    "section": "1. Implement a Quarto Website Project",
+    "text": "1. Implement a Quarto Website Project\n\n\n\n\n\n\nTip\n\n\n\nQuarto has good site with guides and explanations about its files and projects format\n\n\nAfter creating the first few .qmd files, it’s time to implement the Website Project. First I created a separate ‘test’ folder for the Quarto Website Project. That gave me the chance to “play” and test the features with this format in a clean and safe environment.\nAfter familiarizing myself with the Project’s format, I copied the relevant files: _quarto.yml, index.qmd, about.qmd and styles.css to the repository root.\nIn _quarto.yml file added the line:\nproject:\n  output-dir: docs\nDoing this, make deployment of the page through GitHub Pages, much easier.",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "tutorials/00_create_folder.html#publish-in-github",
+    "href": "tutorials/00_create_folder.html#publish-in-github",
+    "title": "Project Setup Guide",
+    "section": "2. Publish in GitHub",
+    "text": "2. Publish in GitHub\nOnce the site is updated, the necessary steps are:\n\n{pwsh} quarto render\n{pwsh} git add .\ncommit\npush",
+    "crumbs": [
+      "Tutorials",
+      "Project Setup Guide"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html",
+    "href": "projects/02_parks_comparison.html",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "",
+    "text": "Hod Hasharon Ecological Park",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#spatial-data",
+    "href": "projects/02_parks_comparison.html#spatial-data",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Spatial Data",
+    "text": "Spatial Data\n\nOpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#workflow",
+    "href": "projects/02_parks_comparison.html#workflow",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Workflow",
+    "text": "Workflow\n\nLooping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#basic-statistic",
+    "href": "projects/02_parks_comparison.html#basic-statistic",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Basic Statistic",
+    "text": "Basic Statistic\n\n\nCalculate parks statistics\n# Total numbers of parks per city:\ncities_gdf[\"parks_no\"] = cities_gdf[\"name\"].apply(\n    lambda x: len(parks[x]))\n\n# Total parks' area per city:\ncities_gdf[\"total_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].sum())/1000\n\n# Average parks' area per city:\ncities_gdf[\"mean_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].mean())/1000\n\n# Total parks' area per 1,000 population:\ncities_gdf[\"park_area_per_1k_pop\"] = round(cities_gdf[\"total_parks_area_dunam\"] / cities_gdf[\"population_k\"], 2)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nname\nNumber of Parks\nTotal Parks Area (Dunam)\nMean Parks Area (Dunam)\nParks Area (Dunam) per 1,000 Population\n\n\n\n\n0\nHod Hasharon\n63\n446.54\n7.09\n7.09\n\n\n1\nKfar Sava\n109\n831.53\n7.63\n8.23\n\n\n2\nRaanana\n179\n793.91\n4.44\n10.59\n\n\n\n\n\n\n\n\nTable 1: Summary Table\n\n\n\n\n\n\n\n\n                            \n                                            \n\n\nFigure 1: Cities’ Parks Statistics\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n1 Dunam = \\(1,000 m^2\\)\n\n\n\nNumber of ParksTotal Parks AreaMean Parks AreaParks Area per 1,000 Population\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nParks Coverage\nWhile park availability provides a general comparison, it does not capture how easily residents can actually reach these parks. Accessibility is estimated by creating 500-meters buffer around parks (representing approximate walking distance) and calculating their coverage relative to the total city area.\n\n\n\n\n\n\nNote\n\n\n\nLand-use and residential distribution are not considered in this analysis.\nThe results should be interpreted as a relative measure of spatial proximity rather than actual walking accessibility.\n\n\n\n\nCalculating parks buffer coverage area\n# Create buffer 500 m around the parks\ncities_gdf['parks_buffer'] = cities_gdf['name'].apply(lambda city_name: parks[city_name].buffer(500).union_all())\n\n# Define as geometry type column and set CRS\ncities_gdf.set_geometry(\"parks_buffer\", inplace=True)\ncities_gdf[\"parks_buffer\"] = cities_gdf[\"parks_buffer\"].set_crs(epsg=2039)\n\n# Calculating cities area\ncities_gdf[\"city_area\"] = cities_gdf.set_geometry(\"geometry\").area/1000\n\n# Calculating un-buffered area\ncities_gdf[\"unbuffered_area\"] = (\n    cities_gdf[\"geometry\"].difference(cities_gdf[\"parks_buffer\"]).area / 1000\n)\n\n\n# Calculating un-buffered percentage\ncities_gdf[\"unbuffered_perc\"] = cities_gdf[\"unbuffered_area\"] / cities_gdf[\"city_area\"] * 100\n\n\n\n\n\n\nHod HasharonKfar SavaRaanana\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Parks’ 500 meter buffer (green area) coverage area\n\n\n\nNote: Cities with large peripheral parks may appear more accessible in buffer-based analysis, even when those parks are less usable for daily access.\n\n\nKey Findings\n\nHod Hasharon has fewer parks overall, both by number and total area\nRaanana has the largest number of parks, but their average area is the smallest, nevertheless, it maintains the highest park area per capita.\nKfar Sava has the largest average parks area\nBoth Kfar Sava and Raanana have similar parks’ accessibility coverage characteristics which covers almost the whole cities area, while Hod Hasharon has a significant portion of its area outside the 500-meter accessibility. (Note: Most of the areas in south-west Hod Hasharon are open fields and industrial)",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "projects/02_parks_comparison.html#advanced-action-items",
+    "href": "projects/02_parks_comparison.html#advanced-action-items",
+    "title": "Cities’ Public Parks Comparison",
+    "section": "Advanced action-items",
+    "text": "Advanced action-items\nHere’s some advanced action-items which can be made on this project:\n\nNetwork Analysis for more accurate accessibility analysis\nAccurate land-use and population distribution mapping can refine the parks spreads relatively to residents areas",
+    "crumbs": [
+      "Projects",
+      "Cities' Public Parks Comparison"
+    ]
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My Spatial World",
+    "section": "",
+    "text": "Map of the world from 1565 (Wikimedia)\nHi, I’m Ronen Weinberg.\nThis site is my small corner of the spatial world — a place where I explore spatial analysis through projects and occasional tutorials.\nEverything here is built using open-source data and free tools. Most of the work is part of my own learning process, especially on the technical side — experimenting, testing ideas, and gradually improving along the way."
+  },
+  {
+    "objectID": "index.html#what-youll-find-here",
+    "href": "index.html#what-youll-find-here",
+    "title": "Welcome to My Spatial World",
+    "section": "What you’ll find here",
+    "text": "What you’ll find here\n\nSpatial analysis projects focused on real-world questions\nStep-by-step workflows and technical explorations\nOccasional tutorials and notes\nExperiments with maps, data, and design\n\nThe projects may focus on different aspects each time — sometimes on the analysis itself, sometimes on data sources, and sometimes on map design."
+  },
+  {
+    "objectID": "index.html#a-note",
+    "href": "index.html#a-note",
+    "title": "Welcome to My Spatial World",
+    "section": "A note",
+    "text": "A note\nThis is not a polished portfolio, but rather an evolving workspace. For me, this is a hobby — a way to facilitate my learning process and document topics that interest me.\nIf it happens to help others along the way — even better."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About this Site",
+    "section": "",
+    "text": "My name is Ronen Weinberg.\nI’ve been fascinated by maps for as long as I can remember. Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.",
+    "crumbs": [
+      "About this Site"
+    ]
+  },
+  {
+    "objectID": "about.html#background",
+    "href": "about.html#background",
+    "title": "About this Site",
+    "section": "Background",
+    "text": "Background\nI am a 30-year military veteran, where I worked as an imagery analyst and was also involved in training. My academic background includes a B.A. in Political Science and an M.A. in Geography.",
+    "crumbs": [
+      "About this Site"
+    ]
+  },
+  {
+    "objectID": "about.html#why-spatial-analysis",
+    "href": "about.html#why-spatial-analysis",
+    "title": "About this Site",
+    "section": "Why spatial analysis",
+    "text": "Why spatial analysis\nFor me, spatial analysis sits at a unique intersection:\n\nHuman and environmental behaviour\nTechnical and analytical work\nVisual thinking, design, and a bit of artistry\n\nIt combines structure and creativity in a way that makes the process as interesting as the results.",
+    "crumbs": [
+      "About this Site"
+    ]
+  },
+  {
+    "objectID": "about.html#about-this-site",
+    "href": "about.html#about-this-site",
+    "title": "About this Site",
+    "section": "About this site",
+    "text": "About this site\nThis site is a personal project — a space where I focus on the technical side of spatial analysis by building and documenting real examples.\nEverything here is based on open-source datasets (e.g OSM) and free tools (e.g Python, R and DuckDB). The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
+    "crumbs": [
+      "About this Site"
+    ]
+  },
+  {
+    "objectID": "about.html#a-personal-note",
+    "href": "about.html#a-personal-note",
+    "title": "About this Site",
+    "section": "A personal note",
+    "text": "A personal note\nThis is my “corner of the world” — a place driven by curiosity and personal interest. It’s first and foremost a hobby.\nThat said, I hope that some of what’s here can also be useful to others who are learning, exploring, or just enjoy maps as much as I do.",
+    "crumbs": [
+      "About this Site"
+    ]
   },
   {
     "objectID": "projects/01_basic_mapping_with_OSM.html",
@@ -172,217 +390,54 @@
     ]
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About this Site",
+    "objectID": "temp_files/overture_landuse.html",
+    "href": "temp_files/overture_landuse.html",
+    "title": "My Spatial World",
     "section": "",
-    "text": "My name is Ronen Weinberg.\nI’ve been fascinated by maps for as long as I can remember. Over time, that curiosity developed into a deeper interest in spatial thinking — understanding how people, environments, and data connect across space.",
-    "crumbs": [
-      "About this Site"
-    ]
+    "text": "Code\nimport geopandas as gpd\nimport duckdb\nimport pandas as pd\n\n\n\n\nCode\n# Connect to in-memory database\ncon = duckdb.connect()\n\n\n\n\nCode\n# Load extensions\ncon.sql(\"INSTALL spatial; LOAD spatial\")\ncon.sql(\"INSTALL httpfs; LOAD httpfs\")\n\n\n\n\nCode\n# Configure s3 access\ncon.sql(\"SET s3_region = 'us-west-2';\")\n\n\n\n\nCode\n# Find the latest release\n\ncon.sql(\"\"\"\n    SET VARIABLE latest_release = (\n        SELECT latest FROM 'https://stac.overturemaps.org/catalog.json'\n    );\n\"\"\")\n\n\n\n\nCode\n# Show the latest release\n\ncon.sql(\"SELECT getvariable('latest_release');\").show()\n\n\n┌───────────────────────────────┐\n│ getvariable('latest_release') │\n│            varchar            │\n├───────────────────────────────┤\n│ 2026-04-15.0                  │\n└───────────────────────────────┘\n\n\n\n\n\nCode\n# variables list\n\ncon.sql(\"SELECT * FROM duckdb_variables();\").show()\n\n\n┌────────────────┬──────────────┬─────────┐\n│      name      │    value     │  type   │\n│    varchar     │   varchar    │ varchar │\n├────────────────┼──────────────┼─────────┤\n│ latest_release │ 2026-04-15.0 │ VARCHAR │\n└────────────────┴──────────────┴─────────┘\n\n\n\n\n\nCode\n# 1. Define theme and type of data\ntheme = \"base\"\not_type = \"land_use\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKB(geometry) as geom_binary -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df with geom_binary to gdf\n\nrel['geom_binary'] = rel['geom_binary'].apply(bytes)\n\nhh_landuse = gpd.GeoDataFrame(\n    rel.drop(columns=['geom_binary']),\n    geometry=gpd.GeoSeries.from_wkb(rel['geom_binary']),\n    crs=\"EPSG:4326\"\n)\n\n\n\n\nCode\ntype(hh_landuse)\n\n\ngeopandas.geodataframe.GeoDataFrame\n\n\n\n\nCode\n# Spatial query with un-changed geometry - JSON format\n# IMPORTANT: This query have the best! filtering\n\nrel2 = con.sql(\"\"\"\n    SELECT\n        id,\n        class,\n        subtype,\n        geometry\n    FROM read_parquet(\n        's3://overturemaps-us-west-2/release/2026-03-18.0/theme=base/type=land_use/*',\n        filename=true,\n        hive_partitioning=1\n    )\n    WHERE \n    -- Step 1: Use the bbox for lightning-fast pruning (The \"Coarse\" filter)\n    bbox.xmin &lt;= 34.9351 AND bbox.xmax &gt;= 34.8617 AND\n    bbox.ymin &lt;= 32.1834 AND bbox.ymax &gt;= 32.1311\n    -- Step 2: Only run the expensive math on the few rows that pass Step 1 (The \"Fine\" filter)\n    AND ST_Intersects(geometry, ST_MakeEnvelope(34.8617, 32.1311, 34.9351, 32.1834));\n\"\"\")\n\n\n\n\nCode\n# Convert the duckdb.query into gdf with 'arrow'\n\narrow_table = rel2.arrow()\n\ngdf_landuse = gpd.GeoDataFrame.from_arrow(arrow_table)\n\n\n\n\nCode\n#  Spatial query, geometery in WKT format\n\nrel3 = con.sql(f\"\"\"\n    SELECT id,\n           class,\n           subtype,\n           ST_AsWKT(geometry) as geom_text -- Renamed to avoid confusion\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").df()\n\n\n\n\nCode\n# Convert the df (geom_text) to gdf\n\ngdf_landuse_3 = gpd.GeoDataFrame(\n    rel3, \n    geometry=gpd.GeoSeries.from_wkt(rel3['geom_text'].astype(str)),\n    crs = \"EPSG:4326\")\n\n\n\n\nCode\nimport contextily as cx\nax = gdf_landuse.plot(alpha=0.5)\ncx.add_basemap(ax, crs=gdf_landuse.crs, source=cx.providers.CartoDB.Positron)\n\n\n\n\n\n\n\n\n\nBoundary,Decimal Degrees Minimum Latitude (South),32.1311∘ Maximum Latitude (North),32.1834∘ Minimum Longitude (West),34.8617∘ Maximum Longitude (East),34.9351∘\n\n\nCode\ntheme = \"divisions\"\not_type = \"division_area\"\n\n# 2. Spatial query, geometery in binary format\nrel = con.sql(f\"\"\"\n    SELECT * EXCLUDE(country, filename, theme, type, version, bbox, id, sources, region, admin_level)\n    FROM read_parquet(\n    format('s3://overturemaps-us-west-2/release/{{}}/theme={theme}/type={ot_type}/*', getvariable('latest_release')),\n    filename=true, hive_partitioning=1)\n    WHERE\n        class LIKE 'town' AND\n        bbox.xmin BETWEEN 34.8617 AND 34.9351 AND\n        bbox.ymin BETWEEN 32.1311 AND 32.1834;\n\"\"\").arrow()\n\ncities = gpd.GeoDataFrame.from_arrow(rel)\n\n\n\n\nCode\ncities\n\n\n\n\n\n\n\n\n\ngeometry\nsubtype\nclass\nnames\nwikidata\nlocal_type\npopulation\n\n\n\n\n0\nPOINT (34.89304 32.1562)\nlocality\ntown\n{'primary': 'הוד השרון', 'common': [('ar', 'هو...\nQ152379\n[(en, town)]\n64120\n\n\n1\nPOINT (34.90746 32.17735)\nlocality\ntown\n{'primary': 'כפר סבא', 'common': [('ar', 'كفار...\nQ152436\n[(en, town)]\n109091"
   },
   {
-    "objectID": "about.html#background",
-    "href": "about.html#background",
-    "title": "About this Site",
-    "section": "Background",
-    "text": "Background\nI am a 30-year military veteran, where I worked as an imagery analyst and was also involved in training. My academic background includes a B.A. in Political Science and an M.A. in Geography.",
-    "crumbs": [
-      "About this Site"
-    ]
-  },
-  {
-    "objectID": "about.html#why-spatial-analysis",
-    "href": "about.html#why-spatial-analysis",
-    "title": "About this Site",
-    "section": "Why spatial analysis",
-    "text": "Why spatial analysis\nFor me, spatial analysis sits at a unique intersection:\n\nHuman and environmental behaviour\nTechnical and analytical work\nVisual thinking, design, and a bit of artistry\n\nIt combines structure and creativity in a way that makes the process as interesting as the results.",
-    "crumbs": [
-      "About this Site"
-    ]
-  },
-  {
-    "objectID": "about.html#about-this-site",
-    "href": "about.html#about-this-site",
-    "title": "About this Site",
-    "section": "About this site",
-    "text": "About this site\nThis site is a personal project — a space where I focus on the technical side of spatial analysis by building and documenting real examples.\nEverything here is based on open-source datasets (e.g OSM) and free tools (e.g Python, R and DuckDB). The goal is not perfection, but progress: learning by doing, experimenting, and refining over time.\nThe topics I explore vary, but often focus on:\n\nAnalysis workflows\nWorking with spatial databases and data sources\nMap design and visualization",
-    "crumbs": [
-      "About this Site"
-    ]
-  },
-  {
-    "objectID": "about.html#a-personal-note",
-    "href": "about.html#a-personal-note",
-    "title": "About this Site",
-    "section": "A personal note",
-    "text": "A personal note\nThis is my “corner of the world” — a place driven by curiosity and personal interest. It’s first and foremost a hobby.\nThat said, I hope that some of what’s here can also be useful to others who are learning, exploring, or just enjoy maps as much as I do.",
-    "crumbs": [
-      "About this Site"
-    ]
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to My Spatial World",
+    "objectID": "tutorials/01_py2r.html",
+    "href": "tutorials/01_py2r.html",
+    "title": "From Python to R and back….!",
     "section": "",
-    "text": "Map of the world from 1565 (Wikimedia)\nHi, I’m Ronen Weinberg.\nThis site is my small corner of the spatial world — a place where I explore spatial analysis through projects and occasional tutorials.\nEverything here is built using open-source data and free tools. Most of the work is part of my own learning process, especially on the technical side — experimenting, testing ideas, and gradually improving along the way."
-  },
-  {
-    "objectID": "index.html#what-youll-find-here",
-    "href": "index.html#what-youll-find-here",
-    "title": "Welcome to My Spatial World",
-    "section": "What you’ll find here",
-    "text": "What you’ll find here\n\nSpatial analysis projects focused on real-world questions\nStep-by-step workflows and technical explorations\nOccasional tutorials and notes\nExperiments with maps, data, and design\n\nThe projects may focus on different aspects each time — sometimes on the analysis itself, sometimes on data sources, and sometimes on map design."
-  },
-  {
-    "objectID": "index.html#a-note",
-    "href": "index.html#a-note",
-    "title": "Welcome to My Spatial World",
-    "section": "A note",
-    "text": "A note\nThis is not a polished portfolio, but rather an evolving workspace. For me, this is a hobby — a way to facilitate my learning process and document topics that interest me.\nIf it happens to help others along the way — even better."
-  },
-  {
-    "objectID": "projects/02_parks_comparison.html",
-    "href": "projects/02_parks_comparison.html",
-    "title": "Cities’ Public Parks Comparison",
-    "section": "",
-    "text": "Hod Hasharon Ecological Park",
-    "crumbs": [
-      "Projects",
-      "Cities' Public Parks Comparison"
-    ]
-  },
-  {
-    "objectID": "projects/02_parks_comparison.html#spatial-data",
-    "href": "projects/02_parks_comparison.html#spatial-data",
-    "title": "Cities’ Public Parks Comparison",
-    "section": "Spatial Data",
-    "text": "Spatial Data\n\nOpenStreetMap: leisure: [park, garden]\n\n\n\n\n\n\n\nNote\n\n\n\nOpenStreetMap data may be incomplete or inconsistent, so results should be interpreted as approximate.",
-    "crumbs": [
-      "Projects",
-      "Cities' Public Parks Comparison"
-    ]
-  },
-  {
-    "objectID": "projects/02_parks_comparison.html#workflow",
-    "href": "projects/02_parks_comparison.html#workflow",
-    "title": "Cities’ Public Parks Comparison",
-    "section": "Workflow",
-    "text": "Workflow\n\nLooping through the cities’ boundaries and extracting the parks info for each city.\nPark information is structured as Dictionary - Key: City’s name, Value: Parks GeoDataFrame\nCRS transformation to Israeli TM Grid (EPSG: 2039)\nSpatial analysis\nSimple analysis with static and interactive visualization\n\nCRS:\nFor this analysis I’ll use Israel 1993 / Israeli TM Grid (EPSG: 2039)",
-    "crumbs": [
-      "Projects",
-      "Cities' Public Parks Comparison"
-    ]
-  },
-  {
-    "objectID": "projects/02_parks_comparison.html#basic-statistic",
-    "href": "projects/02_parks_comparison.html#basic-statistic",
-    "title": "Cities’ Public Parks Comparison",
-    "section": "Basic Statistic",
-    "text": "Basic Statistic\n\n\nCalculate parks statistics\n# Total numbers of parks per city:\ncities_gdf[\"parks_no\"] = cities_gdf[\"name\"].apply(\n    lambda x: len(parks[x]))\n\n# Total parks' area per city:\ncities_gdf[\"total_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].sum())/1000\n\n# Average parks' area per city:\ncities_gdf[\"mean_parks_area_dunam\"] = cities_gdf[\"name\"].apply(\n    lambda x: parks[x][\"area_m2\"].mean())/1000\n\n# Total parks' area per 1,000 population:\ncities_gdf[\"park_area_per_1k_pop\"] = round(cities_gdf[\"total_parks_area_dunam\"] / cities_gdf[\"population_k\"], 2)\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nname\nNumber of Parks\nTotal Parks Area (Dunam)\nMean Parks Area (Dunam)\nParks Area (Dunam) per 1,000 Population\n\n\n\n\n0\nHod Hasharon\n63\n446.54\n7.09\n7.09\n\n\n1\nKfar Sava\n109\n831.53\n7.63\n8.23\n\n\n2\nRaanana\n179\n793.91\n4.44\n10.59\n\n\n\n\n\n\n\n\nTable 1: Summary Table\n\n\n\n\n\n\n\n\n                            \n                                            \n\n\nFigure 1: Cities’ Parks Statistics\n\n\n\n\n\n\n\n\n\n\nNote\n\n\n\n1 Dunam = \\(1,000 m^2\\)\n\n\n\nNumber of ParksTotal Parks AreaMean Parks AreaParks Area per 1,000 Population\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nParks Coverage\nWhile park availability provides a general comparison, it does not capture how easily residents can actually reach these parks. Accessibility is estimated by creating 500-meters buffer around parks (representing approximate walking distance) and calculating their coverage relative to the total city area.\n\n\n\n\n\n\nNote\n\n\n\nLand-use and residential distribution are not considered in this analysis.\nThe results should be interpreted as a relative measure of spatial proximity rather than actual walking accessibility.\n\n\n\n\nCalculating parks buffer coverage area\n# Create buffer 500 m around the parks\ncities_gdf['parks_buffer'] = cities_gdf['name'].apply(lambda city_name: parks[city_name].buffer(500).union_all())\n\n# Define as geometry type column and set CRS\ncities_gdf.set_geometry(\"parks_buffer\", inplace=True)\ncities_gdf[\"parks_buffer\"] = cities_gdf[\"parks_buffer\"].set_crs(epsg=2039)\n\n# Calculating cities area\ncities_gdf[\"city_area\"] = cities_gdf.set_geometry(\"geometry\").area/1000\n\n# Calculating un-buffered area\ncities_gdf[\"unbuffered_area\"] = (\n    cities_gdf[\"geometry\"].difference(cities_gdf[\"parks_buffer\"]).area / 1000\n)\n\n\n# Calculating un-buffered percentage\ncities_gdf[\"unbuffered_perc\"] = cities_gdf[\"unbuffered_area\"] / cities_gdf[\"city_area\"] * 100\n\n\n\n\n\n\nHod HasharonKfar SavaRaanana\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nFigure 2: Parks’ 500 meter buffer (green area) coverage area\n\n\n\nNote: Cities with large peripheral parks may appear more accessible in buffer-based analysis, even when those parks are less usable for daily access.\n\n\nKey Findings\n\nHod Hasharon has fewer parks overall, both by number and total area\nRaanana has the largest number of parks, but their average area is the smallest, nevertheless, it maintains the highest park area per capita.\nKfar Sava has the largest average parks area\nBoth Kfar Sava and Raanana have similar parks’ accessibility coverage characteristics which covers almost the whole cities area, while Hod Hasharon has a significant portion of its area outside the 500-meter accessibility. (Note: Most of the areas in south-west Hod Hasharon are open fields and industrial)",
-    "crumbs": [
-      "Projects",
-      "Cities' Public Parks Comparison"
-    ]
-  },
-  {
-    "objectID": "projects/02_parks_comparison.html#advanced-action-items",
-    "href": "projects/02_parks_comparison.html#advanced-action-items",
-    "title": "Cities’ Public Parks Comparison",
-    "section": "Advanced action-items",
-    "text": "Advanced action-items\nHere’s some advanced action-items which can be made on this project:\n\nNetwork Analysis for more accurate accessibility analysis\nAccurate land-use and population distribution mapping can refine the parks spreads relatively to residents areas",
-    "crumbs": [
-      "Projects",
-      "Cities' Public Parks Comparison"
-    ]
-  },
-  {
-    "objectID": "tutorials/00_create_folder.html",
-    "href": "tutorials/00_create_folder.html",
-    "title": "Project Setup Guide",
-    "section": "",
-    "text": "My main goal with this project is to create a blog / web site about spatial analysis, with two main focuses: analysis project where I analyze a specific issue, and tutorial topics where I explain a specific issue (mostly for my future self!).\nI will be using Python, R and SQL with duckdb, utilizing Positron with Quarto\nInstead of trying to build the whole website at once, I’m using a “staged approach”:\n\nCreate some standalone .qmd files in organized subfolders.\nOnce initial content is ready, implement a Quarto Website structure to glue them together.",
+    "text": "Before I start, I wanted to test the combination of Python and R in the same .qmd file.\nApparently, it’s very simple — just add library(reticulate) in an R cell and you’re all set.\nTo pass objects (e.g., variables, data frames, and so on…) between the two languages, you need to reference the variable as r.[variable] in Python or py$[variable] in R.\nSo where do the problems start? When you try to insert Python inline code inside markdown text.\nIn short, even though your .qmd document contains both R and Python executable code cells, it can execute only R inline code.\\ To bypass this, there are a bunch of reticulate:: functions that can help. The two main ones are:\n\nreticulate::py_str() — roughly equivalent to print(str(...))\nreticulate::py_eval() — executes a Python expression that returns numbers, strings, lists, or dicts (can be problematic with Python objects like type, classes, or modules)\n\nExample: {r} reticulate::py_eval(\"str(type(x))\") — returns the type of variable x as a string",
     "crumbs": [
       "Tutorials",
-      "Project Setup Guide"
+      "From Python to R and back....!"
     ]
   },
   {
-    "objectID": "tutorials/00_create_folder.html#initialize-the-environment",
-    "href": "tutorials/00_create_folder.html#initialize-the-environment",
-    "title": "Project Setup Guide",
-    "section": "1. Initialize the Environment",
-    "text": "1. Initialize the Environment\nI started by creating an R project folder in Positron with renv for reproducible R dependencies and Git-ready version control. Next, I added a Python environment using UV: {pwsh} uv init",
+    "objectID": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
+    "href": "tutorials/01_py2r.html#passing-variable-from-python-to-r",
+    "title": "From Python to R and back….!",
+    "section": "Passing variable from Python to R",
+    "text": "Passing variable from Python to R\n\n# &lt;Py&gt;\n\n# Create Python variable py_x\npy_x = 10\nprint(py_x)\n\n10\n\n\nType of py_x: &lt;class ‘int’&gt;\n\n# &lt;R&gt;\n\n# Passing Python variable py_x to R \nr_x &lt;- py$py_x\nprint(r_x)\n\n[1] 10\n\n\nClass of r_x: integer",
     "crumbs": [
       "Tutorials",
-      "Project Setup Guide"
+      "From Python to R and back....!"
     ]
   },
   {
-    "objectID": "tutorials/00_create_folder.html#core-packages",
-    "href": "tutorials/00_create_folder.html#core-packages",
-    "title": "Project Setup Guide",
-    "section": "2. Core Packages",
-    "text": "2. Core Packages\nI installed the primary spatial and data science packages for each language:\nPython (uv add):\n\ngeopandas, rasterio (Vector/Raster analysis)\nduckdb (SQL)\nmatplotlib (Visualization)\nfolium, leafmap (Interactive Visualization)\njupyter (Engine support)\n\nR (install.packages):\n\ntidyverse (Data Science packages collection)\nsf (Vector analysis)\nterra (Raster analysis)\nreticulate (The bridge between R and Python)\n\n\n\n\n\n\n\nNote\n\n\n\nI am using reticulate for the integration between R and Python environments in the same *.qmd file.",
+    "objectID": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
+    "href": "tutorials/01_py2r.html#passing-variable-from-r-to-python",
+    "title": "From Python to R and back….!",
+    "section": "Passing variable from R to Python",
+    "text": "Passing variable from R to Python\n\n# &lt;R&gt;\n\n# Create R variable r_y \nr_y &lt;- 20\nprint(r_y)\n\n[1] 20\n\n\nClass of r_y: numeric\n\n# &lt;Py&gt;\n\n# Passing the R variable r_y to Python \npy_y = r.r_y\nprint(py_y)\n\n20.0\n\n\nType of py_y: &lt;class ‘float’&gt;",
     "crumbs": [
       "Tutorials",
-      "Project Setup Guide"
+      "From Python to R and back....!"
     ]
   },
   {
-    "objectID": "tutorials/00_create_folder.html#the-environment-bridge",
-    "href": "tutorials/00_create_folder.html#the-environment-bridge",
-    "title": "Project Setup Guide",
-    "section": "3. The environment Bridge",
-    "text": "3. The environment Bridge\nThe biggest challenge was ensuring reticulate could find the uv environment when rendering files inside subfolders.\nFor local work on Positron, I use a .Renviron file in the project root, which is Git-ignored:\n# .Renviron (Local only!)\nRETICULATE_PYTHON = \"../.venv/Scripts/python.exe\"\n\n\n\n\n\n\nNote\n\n\n\nIn this manner, the .qmd files need to be inside a one-level sub-folder and not directly in the project root. For more flexibility, a full path should be provided",
+    "objectID": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
+    "href": "tutorials/01_py2r.html#passing-dataframe-from-python-to-r",
+    "title": "From Python to R and back….!",
+    "section": "Passing DataFrame from Python to R",
+    "text": "Passing DataFrame from Python to R\n\n# &lt;Py&gt;\n\n# Create a pandas df from .csv file\nimport pandas as pd\n\nurl = \"https://raw.githubusercontent.com/mwaskom/seaborn-data/refs/heads/master/flights.csv\"\n\npy_flights = pd.read_csv(url)\npy_flights.head()\n\n   year     month  passengers\n0  1949   January         112\n1  1949  February         118\n2  1949     March         132\n3  1949     April         129\n4  1949       May         121\n\n\nType of py_flights: &lt;class ‘pandas.core.frame.DataFrame’&gt;\n\n# &lt;R&gt;\n\n# Passing the pandas df to R data.frame\nr_flights &lt;- py$py_flights\nhead(r_flights)\n\n  year    month passengers\n1 1949  January        112\n2 1949 February        118\n3 1949    March        132\n4 1949    April        129\n5 1949      May        121\n6 1949     June        135\n\n\nClass of r_flights: data.frame",
     "crumbs": [
       "Tutorials",
-      "Project Setup Guide"
-    ]
-  },
-  {
-    "objectID": "tutorials/00_create_folder.html#python-environment-setting-uv",
-    "href": "tutorials/00_create_folder.html#python-environment-setting-uv",
-    "title": "Project Setup Guide",
-    "section": "4. Python Environment Setting (‘uv’)",
-    "text": "4. Python Environment Setting (‘uv’)\nAnother challenge I was encountered in Positron, was to make sure that while Quarto uses Python, it uses to the local ‘uv’ environment (.venv), and not the base Python (without the necessary libraries). This problem is unique to ‘uv’ environment which isn’t activated manually. To solve this I used this Terminal command:\nPowerShell\n[...\\spatial_project]\n &gt;  setx QUARTO_PYTHON \".venv\\Scripts\\python.exe\"",
-    "crumbs": [
-      "Tutorials",
-      "Project Setup Guide"
-    ]
-  },
-  {
-    "objectID": "tutorials/00_create_folder.html#folder-structure",
-    "href": "tutorials/00_create_folder.html#folder-structure",
-    "title": "Project Setup Guide",
-    "section": "5. Folder Structure",
-    "text": "5. Folder Structure\nThe repository is organized into two main content folders:\n\nprojects/: Analysis projects\ntutorials/: General guides\n\nAnd now our repository is ready!",
-    "crumbs": [
-      "Tutorials",
-      "Project Setup Guide"
-    ]
-  },
-  {
-    "objectID": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
-    "href": "tutorials/00_create_folder.html#implement-a-quarto-website-project",
-    "title": "Project Setup Guide",
-    "section": "1. Implement a Quarto Website Project",
-    "text": "1. Implement a Quarto Website Project\n\n\n\n\n\n\nTip\n\n\n\nQuarto has good site with guides and explanations about its files and projects format\n\n\nAfter creating the first few .qmd files, it’s time to implement the Website Project. First I created a separate ‘test’ folder for the Quarto Website Project. That gave me the chance to “play” and test the features with this format in a clean and safe environment.\nAfter familiarizing myself with the Project’s format, I copied the relevant files: _quarto.yml, index.qmd, about.qmd and styles.css to the repository root.\nIn _quarto.yml file added the line:\nproject:\n  output-dir: docs\nDoing this, make deployment of the page through GitHub Pages, much easier.",
-    "crumbs": [
-      "Tutorials",
-      "Project Setup Guide"
-    ]
-  },
-  {
-    "objectID": "tutorials/00_create_folder.html#publish-in-github",
-    "href": "tutorials/00_create_folder.html#publish-in-github",
-    "title": "Project Setup Guide",
-    "section": "2. Publish in GitHub",
-    "text": "2. Publish in GitHub\nOnce the site is updated, the necessary steps are:\n\n{pwsh} quarto render\n{pwsh} git add .\ncommit\npush",
-    "crumbs": [
-      "Tutorials",
-      "Project Setup Guide"
+      "From Python to R and back....!"
     ]
   }
 ]
